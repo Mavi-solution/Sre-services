@@ -1,11 +1,9 @@
 
 import React from 'react';
+import { Link } from 'react-router-dom';
+import { BRAND } from '../data/site';
 
-interface HeroProps {
-  onContactClick: () => void;
-}
-
-export const Hero: React.FC<HeroProps> = ({ onContactClick }) => {
+export const Hero: React.FC = () => {
   return (
     <section id="home" className="relative overflow-hidden min-h-[90vh] flex flex-col justify-center py-20 bg-slate-50 dark:bg-transparent transition-colors duration-300">
       <div className="scanline dark:block hidden"></div>
@@ -30,7 +28,7 @@ export const Hero: React.FC<HeroProps> = ({ onContactClick }) => {
         </h1>
 
         <p className="text-lg md:text-xl font-normal text-slate-600 dark:text-slate-200 mb-6 max-w-4xl leading-relaxed">
-          Maxi Vision bridges the gap between <span className="text-slate-900 dark:text-white font-bold transition-colors">Web Development</span> and <span className="text-slate-900 dark:text-white font-bold transition-colors">Site Reliability</span>. We don't just build websites; we engineer high-performance platforms that are: <span className="text-[#2E7CF6] font-bold">Ultra-Fast</span>, <span className="text-slate-900 dark:text-white font-bold transition-colors">Secure</span>, and <span className="text-[#42E695] font-bold">Scalable</span>.
+          {BRAND.name} bridges the gap between <span className="text-slate-900 dark:text-white font-bold transition-colors">Web Development</span> and <span className="text-slate-900 dark:text-white font-bold transition-colors">Site Reliability</span>. We don't just build websites; we engineer high-performance platforms that are: <span className="text-[#2E7CF6] font-bold">Ultra-Fast</span>, <span className="text-slate-900 dark:text-white font-bold transition-colors">Secure</span>, and <span className="text-[#42E695] font-bold">Scalable</span>.
         </p>
 
         {/* Credibility micro-line */}
@@ -42,22 +40,19 @@ export const Hero: React.FC<HeroProps> = ({ onContactClick }) => {
         </div>
 
         <div className="flex flex-col sm:flex-row justify-start gap-6 mb-20 w-full">
-          <button
-            onClick={onContactClick}
+          <Link
+            to="/contact"
             className="px-12 py-5 bg-gradient-to-r from-[#42E695] to-[#3BB2B8] text-slate-950 font-black rounded-xl hover:scale-105 transition-all duration-300 uppercase tracking-[0.1em] shadow-2xl shadow-green-500/20 inline-block text-center"
           >
             Secure Your Infrastructure
-          </button>
-          <button
-            onClick={() => {
-              const el = document.getElementById('resources');
-              if (el) el.scrollIntoView({ behavior: 'smooth' });
-            }}
+          </Link>
+          <a
+            href="#resources"
             className="px-12 py-5 bg-slate-100 dark:bg-white/5 border border-slate-300 dark:border-white/10 text-slate-900 dark:text-white font-bold rounded-xl hover:bg-slate-200 dark:hover:bg-white/10 transition-all duration-300 flex items-center justify-center gap-3 group"
           >
             <span className="uppercase text-[12px] tracking-widest">View Tools</span>
-            <i className="fa-solid fa-microchip text-blue-500 group-hover:rotate-90 transition-transform"></i>
-          </button>
+            <i className="fa-solid fa-microchip text-blue-500 group-hover:rotate-90 transition-transform" aria-hidden="true"></i>
+          </a>
         </div>
       </div>
     </section>

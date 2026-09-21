@@ -30,7 +30,7 @@ const knowledgeBase: { patterns: string[][]; answer: string }[] = [
       ['about mavi'],
     ],
     answer:
-      'We provide "Maxi Vision" for your infrastructure. We automate scaling, monitoring, and incident response to ensure 99.99% uptime for startups in India and the UAE.',
+      'We provide total infrastructure visibility for your systems. We automate scaling, monitoring, and incident response to ensure 99.99% uptime for startups across India, the UAE, and the USA.',
   },
   {
     patterns: [
@@ -56,7 +56,7 @@ const knowledgeBase: { patterns: string[][]; answer: string }[] = [
   {
     patterns: [['maxi vision'], ['why', 'maxi']],
     answer:
-      'Maxi Vision means seeing the big picture of your infrastructure while monitoring each microservice for total system harmony.',
+      'MaviSolution gives you the big picture of your infrastructure while monitoring each microservice for total system harmony.',
   },
   {
     patterns: [['mavi ai'], ['what is mavi'], ['who are you'], ['who is mavi']],
@@ -101,7 +101,7 @@ const knowledgeBase: { patterns: string[][]; answer: string }[] = [
   {
     patterns: [['data residency'], ['residency'], ['gdpr'], ['data protection']],
     answer:
-      'We support data residency in India and the UAE, and design for regional failover across providers to meet your compliance needs.',
+      'We support data residency in India, the UAE, and the USA, and design for regional failover across providers to meet your compliance needs.',
   },
   {
     patterns: [['get started'], ['getting started'], ['onboard'], ['how do we start'], ['begin']],
@@ -458,9 +458,9 @@ export const Chatbot: React.FC = () => {
                 <i className="fa-solid fa-robot text-lg"></i>
               </div>
               <div>
-                <h4 className="text-sm font-black text-slate-900 dark:text-white uppercase tracking-widest">
+                <h2 className="text-sm font-black text-slate-900 dark:text-white uppercase tracking-widest">
                   SRE ASSISTANT
-                </h4>
+                </h2>
                 <div className="flex items-center gap-1.5 mt-0.5">
                   <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span>
                   <span className="text-[9px] font-bold text-green-600 dark:text-green-500 uppercase tracking-tighter">
@@ -580,7 +580,7 @@ export const Chatbot: React.FC = () => {
               </button>
             </div>
             <p className="text-center text-[9px] text-slate-400 dark:text-slate-500 uppercase tracking-widest mt-4 font-bold">
-              Maxi Vision Reliability Intelligence v2.0
+              MaviSolution Reliability Intelligence v2.0
             </p>
           </div>
         </div>

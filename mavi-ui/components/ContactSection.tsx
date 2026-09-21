@@ -1,11 +1,9 @@
 
 import React from 'react';
+import { Link } from 'react-router-dom';
+import { CONTACT } from '../data/site';
 
-interface ContactSectionProps {
-  onContactClick: () => void;
-}
-
-export const ContactSection: React.FC<ContactSectionProps> = ({ onContactClick }) => {
+export const ContactSection: React.FC = () => {
   return (
     <section id="contact" className="py-24 relative overflow-hidden bg-slate-50 dark:bg-transparent">
       <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 relative z-10">
@@ -38,13 +36,20 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ onContactClick }
                   </div>
                 ))}
               </div>
+
+              <Link
+                to="/contact"
+                className="inline-flex items-center gap-3 px-10 py-5 bg-gradient-to-r from-[#42E695] to-[#3BB2B8] text-slate-950 font-black rounded-xl uppercase tracking-[0.1em] text-xs hover:scale-105 transition-transform shadow-2xl shadow-green-500/20"
+              >
+                Book a Reliability Review
+              </Link>
             </div>
 
             <div className="flex flex-col justify-center gap-6">
               <div className="grid gap-4">
 
                 {/* Email Channel */}
-                <a href="mailto:support@mavisolution.com" className="flex items-center gap-5 p-6 bg-white dark:bg-slate-900/50 border border-slate-200 dark:border-white/5 rounded-2xl hover:border-blue-500/40 hover:scale-[1.02] transition-all group shadow-sm">
+                <a href={`mailto:${CONTACT.email}`} className="flex items-center gap-5 p-6 bg-white dark:bg-slate-900/50 border border-slate-200 dark:border-white/5 rounded-2xl hover:border-blue-500/40 hover:scale-[1.02] transition-all group shadow-sm">
                   <div className="w-12 h-12 bg-blue-500/10 rounded-xl flex items-center justify-center text-blue-600 dark:text-blue-400 group-hover:bg-blue-600 group-hover:text-white transition-all">
                     <i className="fa-solid fa-envelope text-lg"></i>
                   </div>
@@ -54,19 +59,8 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ onContactClick }
                   </div>
                 </a>
 
-                {/* WhatsApp Channel */}
-                {/*<a href="https://wa.me/919999999999" target="_blank" rel="noopener noreferrer" className="flex items-center gap-5 p-6 bg-white dark:bg-slate-900/50 border border-slate-200 dark:border-white/5 rounded-2xl hover:border-green-500/40 hover:scale-[1.02] transition-all group shadow-sm">
-                  <div className="w-12 h-12 bg-green-500/10 rounded-xl flex items-center justify-center text-green-600 dark:text-green-400 group-hover:bg-green-500 group-hover:text-white dark:group-hover:text-slate-950 transition-all">
-                    <i className="fa-brands fa-whatsapp text-2xl"></i>
-                  </div>
-                  <div>
-                    <span className="text-[9px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest block mb-1">WhatsApp Business</span>
-                    <span className="text-slate-900 dark:text-white font-bold tracking-wide text-sm transition-colors">Message Our Engineers</span>
-                  </div>
-                </a>*/}
-
                 {/* LinkedIn Channel */}
-                <a href="https://www.linkedin.com/company/mavisoulutions/" target="_blank" rel="noopener noreferrer" className="flex items-center gap-5 p-6 bg-white dark:bg-slate-900/50 border border-slate-200 dark:border-white/5 rounded-2xl hover:border-blue-400/40 hover:scale-[1.02] transition-all group shadow-sm">
+                <a href={CONTACT.linkedin} target="_blank" rel="noopener noreferrer" className="flex items-center gap-5 p-6 bg-white dark:bg-slate-900/50 border border-slate-200 dark:border-white/5 rounded-2xl hover:border-blue-400/40 hover:scale-[1.02] transition-all group shadow-sm">
                   <div className="w-12 h-12 bg-slate-900 dark:bg-white/10 rounded-xl flex items-center justify-center text-slate-600 dark:text-white group-hover:bg-blue-600 group-hover:text-white transition-all">
                     <i className="fa-brands fa-linkedin-in text-lg"></i>
                   </div>

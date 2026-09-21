@@ -2,6 +2,14 @@
 import React from 'react';
 
 export const CaseStudy: React.FC = () => {
+  // TODO(mavisolution): fill these in to make the metrics verifiable.
+  // Unattributed figures read as marketing copy to B2B buyers and weaken E-E-A-T.
+  const attribution = {
+    client: '', // e.g. 'Placibo Technologies Pvt Ltd' — or 'Confidential (fintech, 40 engineers)'
+    engagementPeriod: '', // e.g. 'March–August 2026'
+    measurementBasis: '', // e.g. 'Datadog incident data, 90 days pre- vs post-engagement'
+  };
+
   const metrics = [
     { label: 'MTTR REDUCTION', value: '85%', trend: 'down', icon: 'fa-stopwatch' },
     { label: 'ALERT VOLUME', value: '99%', trend: 'down', icon: 'fa-bell-slash' },
@@ -12,8 +20,8 @@ export const CaseStudy: React.FC = () => {
     <section id="work" className="py-24 relative overflow-hidden">
       <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 relative z-10">
         <div className="mb-16">
-          <h2 className="text-[10px] font-black text-blue-600 dark:text-blue-400 uppercase tracking-[0.4em] mb-4">Operational Success</h2>
-          <h3 className="text-4xl md:text-5xl font-black text-slate-900 dark:text-white uppercase tracking-tight">WORK</h3>
+          <p className="text-[10px] font-black text-blue-600 dark:text-blue-400 uppercase tracking-[0.4em] mb-4">Operational Success</p>
+          <h2 className="text-4xl md:text-5xl font-black text-slate-900 dark:text-white uppercase tracking-tight">Case Study</h2>
         </div>
 
         <div className="glass-card border border-slate-200 dark:border-white/10 rounded-[40px] overflow-hidden shadow-2xl relative group transition-colors">
@@ -21,10 +29,15 @@ export const CaseStudy: React.FC = () => {
             {/* Visual Side: Infrastructure Cluster */}
             <div className="lg:col-span-5 relative min-h-[500px] flex flex-col">
               <div className="absolute inset-0 bg-slate-950">
-                <img 
-                  src="https://images.unsplash.com/photo-1558494949-ef010cbdcc51?auto=format&fit=crop&q=80&w=1200" 
+                <img
+                  src="/case-study-infrastructure.png"
+                  width={1200}
+                  height={900}
+                  loading="lazy"
+                  decoding="async"
                   className="w-full h-full object-cover opacity-20 group-hover:opacity-40 transition-opacity duration-1000 group-hover:scale-110"
-                  alt="Infrastructure Cluster"
+                  alt=""
+                  aria-hidden="true"
                 />
                 {/* Tech Grid Overlay */}
                 <div className="absolute inset-0 opacity-[0.03] dark:opacity-[0.07] pointer-events-none bg-[radial-gradient(#fff_1px,transparent_1px)] [background-size:20px_20px]"></div>
@@ -58,7 +71,7 @@ export const CaseStudy: React.FC = () => {
                 </div>
                 
                 <div className="space-y-3 transform transition-transform duration-500 group-hover:translate-y-2">
-                  <span className="text-[10px] font-black text-[#42E695] uppercase tracking-[0.3em] ml-2">AFTER_MONITRONIX</span>
+                  <span className="text-[10px] font-black text-[#42E695] uppercase tracking-[0.3em] ml-2">AFTER_MAVISOLUTION</span>
                   <div className="p-5 bg-white/80 dark:bg-green-500/5 backdrop-blur-sm border border-green-500/20 rounded-2xl shadow-xl">
                     <p className="text-slate-900 dark:text-green-50 text-sm font-bold leading-relaxed italic">"Intelligent noise reduction. Zero engineer burnout."</p>
                   </div>
@@ -73,22 +86,29 @@ export const CaseStudy: React.FC = () => {
 
             {/* Content Side */}
             <div className="lg:col-span-7 p-10 md:p-16 flex flex-col justify-center bg-white/50 dark:bg-transparent">
-              <h4 className="text-[11px] font-black text-[#2E7CF6] uppercase tracking-[0.4em] mb-6">Featured Case Study</h4>
-              <h5 className="text-3xl font-black text-slate-900 dark:text-white mb-8 uppercase tracking-tight">Panic-Free Management</h5>
+              <p className="text-[11px] font-black text-[#2E7CF6] uppercase tracking-[0.4em] mb-6">Featured Case Study</p>
+              <h3 className="text-3xl font-black text-slate-900 dark:text-white mb-4 uppercase tracking-tight">Panic-Free Management</h3>
+              {(attribution.client || attribution.engagementPeriod) && (
+                <p className="text-xs font-bold text-slate-500 dark:text-slate-400 mb-8 tracking-wide">
+                  {attribution.client}
+                  {attribution.client && attribution.engagementPeriod ? ' · ' : ''}
+                  {attribution.engagementPeriod}
+                </p>
+              )}
               
               <div className="grid md:grid-cols-2 gap-12 mb-10">
                 <div>
-                  <h6 className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-4">The Challenge</h6>
+                  <h4 className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-4">The Challenge</h4>
                   <p className="text-slate-600 dark:text-slate-400 text-sm leading-relaxed">Frequent alert storms during deployment windows led to critical downtime and customer dissatisfaction.</p>
                 </div>
                 <div>
-                  <h6 className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-4">The Strategic Win</h6>
+                  <h4 className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-4">The Strategic Win</h4>
                   <p className="text-green-600 dark:text-[#42E695] text-xl font-black uppercase italic leading-tight">"Efficiency through noise reduction."</p>
                 </div>
               </div>
 
               <div className="mb-12">
-                <h6 className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-6 border-b border-slate-200 dark:border-white/5 pb-2">Outcome Metrics</h6>
+                <h4 className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-6 border-b border-slate-200 dark:border-white/5 pb-2">Outcome Metrics</h4>
                 <div className="grid grid-cols-3 gap-4">
                   {metrics.map((m, i) => (
                     <div key={i} className="p-4 rounded-2xl bg-slate-50 dark:bg-white/[0.03] border border-slate-200 dark:border-white/5 group-hover:border-blue-500/20 transition-all">
@@ -104,6 +124,11 @@ export const CaseStudy: React.FC = () => {
                     </div>
                   ))}
                 </div>
+                {attribution.measurementBasis && (
+                  <p className="mt-4 text-[10px] text-slate-500 dark:text-slate-400 leading-relaxed">
+                    Measured: {attribution.measurementBasis}
+                  </p>
+                )}
               </div>
 
               <div className="flex flex-wrap gap-4">

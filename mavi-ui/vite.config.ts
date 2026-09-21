@@ -16,4 +16,18 @@ export default defineConfig({
       '@': path.resolve(__dirname, '.'),
     },
   },
+  build: {
+    // Content-hashed filenames let Vercel serve these immutable + long-cached.
+    rollupOptions: {
+      output: {
+        manualChunks(id) {
+          if (!id.includes('node_modules')) return;
+          if (id.includes('react-router')) return 'router';
+          if (id.includes('/react/') || id.includes('react-dom')) return 'react';
+          if (id.includes('motion')) return 'motion';
+          if (id.includes('lucide-react')) return 'icons';
+        },
+      },
+    },
+  },
 });

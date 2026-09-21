@@ -1,87 +1,59 @@
+import React, { useEffect } from 'react';
+import { Route, Routes, useLocation } from 'react-router-dom';
 
-import React, { useState, useEffect } from 'react';
 import { Header } from './components/Header';
-import { Hero } from './components/Hero';
-import { About } from './components/About';
-import { SREPhilosophy } from './components/SREPhilosophy';
-import { ServicesTable } from './components/ServicesTable';
-import { AIAdvantage } from './components/AIAdvantage';
-import { ServicePortfolio } from './components/ServicePortfolio';
-import { ClientsSection } from './components/ClientsSection';
-import { CaseStudy } from './components/CaseStudy';
-import { TechStack } from './components/TechStack';
-import { ContactSection } from './components/ContactSection';
-import { ContactPage } from './components/ContactPage';
-import { LegalPage } from './components/LegalPage';
 import { Footer } from './components/Footer';
 import { Chatbot } from './components/Chatbot';
 import { ThemeToggle } from './components/ThemeToggle';
+import { Seo } from './components/Seo';
+import { ContactPage } from './components/ContactPage';
+import { LegalPage } from './components/LegalPage';
 
-const App: React.FC = () => {
-  const [view, setView] = useState<'home' | 'contact' | 'privacy' | 'terms'>('home');
+import { HomePage } from './pages/HomePage';
+import { AboutPage } from './pages/AboutPage';
+import { ServicesPage } from './pages/ServicesPage';
+import { ServiceDetailPage } from './pages/ServiceDetailPage';
+import { CaseStudiesPage } from './pages/CaseStudiesPage';
+import { NotFoundPage } from './pages/NotFoundPage';
 
-  // Handle back button / hash changes for a better SPA feel
+/** Scrolls to top on route change, but preserves in-page #anchor jumps. */
+const ScrollToTop: React.FC = () => {
+  const { pathname, hash } = useLocation();
   useEffect(() => {
-    const handleHashChange = () => {
-      if (window.location.hash === '#contact-page') {
-        setView('contact');
-      } else if (window.location.hash === '#privacy') {
-        setView('privacy');
-      } else if (window.location.hash === '#terms') {
-        setView('terms');
-      } else {
-        setView('home');
-      }
-    };
-    window.addEventListener('hashchange', handleHashChange);
-    handleHashChange();
-    return () => window.removeEventListener('hashchange', handleHashChange);
-  }, []);
-
-  const navigateTo = (newView: 'home' | 'contact' | 'privacy' | 'terms') => {
-    setView(newView);
-    if (newView === 'contact') {
-      window.location.hash = 'contact-page';
-    } else if (newView === 'privacy') {
-      window.location.hash = 'privacy';
-    } else if (newView === 'terms') {
-      window.location.hash = 'terms';
-    } else {
-      window.location.hash = '';
-    }
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
-
-  return (
-    <div className="flex flex-col min-h-screen bg-slate-50 dark:bg-[#050B14] text-slate-900 dark:text-slate-100 transition-colors duration-300">
-      <Header currentView={view} onNavigate={navigateTo} />
-      <main className="flex-grow">
-        {view === 'home' ? (
-          <>
-            <Hero onContactClick={() => navigateTo('contact')} />
-            <About />
-            <SREPhilosophy />
-            <section id="what-we-do">
-              <ServicePortfolio />
-              <ClientsSection />
-              <ServicesTable />
-              <AIAdvantage />
-            </section>
-            <CaseStudy />
-            <TechStack />
-            <ContactSection onContactClick={() => navigateTo('contact')} />
-          </>
-        ) : view === 'contact' ? (
-          <ContactPage />
-        ) : (
-          <LegalPage type={view as 'privacy' | 'terms'} onBack={() => navigateTo('home')} />
-        )}
-      </main>
-      <ThemeToggle />
-      <Chatbot />
-      <Footer onNavigate={navigateTo} />
-    </div>
-  );
+    if (hash) return;
+    window.scrollTo({ top: 0, behavior: 'auto' });
+  }, [pathname, hash]);
+  return null;
 };
+
+const App: React.FC = () => (
+  <div className="flex flex-col min-h-screen bg-slate-50 dark:bg-[#050B14] text-slate-900 dark:text-slate-100 transition-colors duration-300">
+    <Seo />
+    <ScrollToTop />
+    <a
+      href="#main-content"
+      className="sr-only focus:not-sr-only focus:absolute focus:z-[100] focus:top-4 focus:left-4 focus:px-6 focus:py-3 focus:bg-white focus:text-slate-900 focus:rounded-lg focus:shadow-xl focus:font-bold"
+    >
+      Skip to main content
+    </a>
+    <Header />
+    <main id="main-content" className="flex-grow">
+      <Routes>
+        <Route path="/" element={<HomePage />} />
+        <Route path="/about" element={<AboutPage />} />
+        <Route path="/services" element={<ServicesPage />} />
+        <Route path="/services/:slug" element={<ServiceDetailPage />} />
+        <Route path="/case-studies" element={<CaseStudiesPage />} />
+        <Route path="/contact" element={<ContactPage />} />
+        <Route path="/privacy" element={<LegalPage type="privacy" />} />
+        <Route path="/terms" element={<LegalPage type="terms" />} />
+        <Route path="*" element={<NotFoundPage />} />
+      </Routes>
+    </main>
+    <ThemeToggle />
+    <Chatbot />
+    <Footer />
+  </div>
+);
 
 export default App;

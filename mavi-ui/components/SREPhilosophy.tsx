@@ -44,8 +44,8 @@ export const SREPhilosophy: React.FC = () => {
     <section id="goals" className="py-24 relative overflow-hidden bg-white/[0.01]">
       <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 relative z-10 text-left">
         <div className="mb-16">
-          <h2 className="text-[10px] font-black text-[#42E695] uppercase tracking-[0.4em] mb-4 text-center md:text-left">Strategic Execution</h2>
-          <h3 className="text-3xl md:text-5xl font-black text-slate-900 dark:text-white uppercase tracking-tight text-center md:text-left">Our Goals</h3>
+          <p className="text-[10px] font-black text-[#42E695] uppercase tracking-[0.4em] mb-4 text-center md:text-left">Strategic Execution</p>
+          <h2 className="text-3xl md:text-5xl font-black text-slate-900 dark:text-white uppercase tracking-tight text-center md:text-left">Our Goals</h2>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -64,9 +64,9 @@ export const SREPhilosophy: React.FC = () => {
                   <i className={`fa-solid ${goal.icon}`}></i>
                 </div>
               </div>
-              <h4 className="text-slate-900 dark:text-white font-bold uppercase tracking-widest text-sm mb-4">
+              <h3 className="text-slate-900 dark:text-white font-bold uppercase tracking-widest text-sm mb-4">
                 {goal.title}
-              </h4>
+              </h3>
               <p className="text-slate-600 dark:text-slate-400 text-sm leading-relaxed flex-grow">
                 {goal.desc}
               </p>

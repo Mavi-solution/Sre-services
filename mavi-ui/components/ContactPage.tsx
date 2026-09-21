@@ -254,19 +254,27 @@ export const ContactPage: React.FC = () => {
               <form className="space-y-6" onSubmit={handleSubmit}>
 
                 {/* Full Name */}
+                <div>
+                <label htmlFor="full_name" className="block text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-2">Full name</label>
                 <input
+                  id="full_name"
                   name="full_name"
                   value={formData.full_name}
                   onChange={handleChange}
                   type="text"
                   placeholder="John Doe"
+                  autoComplete="name"
                   className="w-full bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl px-6 py-4 text-slate-900 dark:text-white font-medium focus:outline-none focus:border-blue-500 transition-all"
                   required
                 />
+                </div>
 
                 {/* Country Code + Contact Number */}
                 <div className="grid md:grid-cols-3 gap-6">
+                  <div>
+                  <label htmlFor="country_code" className="block text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-2">Country code</label>
                   <select
+                    id="country_code"
                     name="country_code"
                     value={formData.country_code}
                     onChange={handleChange}
@@ -283,8 +291,12 @@ export const ContactPage: React.FC = () => {
                     <option value="+81">+81 (Japan)</option>
                     <option value="+86">+86 (China)</option>
                   </select>
+                  </div>
 
+                  <div className="md:col-span-2">
+                  <label htmlFor="contact_number" className="block text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-2">Contact number</label>
                   <input
+                    id="contact_number"
                     name="contact_number"
                     value={formData.contact_number}
                     inputMode="numeric"
@@ -292,25 +304,35 @@ export const ContactPage: React.FC = () => {
                     onChange={handleChange}
                     type="tel"
                     placeholder="Contact Number"
-                    className="w-full md:col-span-2 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl px-6 py-4 text-slate-900 dark:text-white font-medium focus:outline-none focus:border-blue-500 transition-all"
+                    autoComplete="tel"
+                    className="w-full bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl px-6 py-4 text-slate-900 dark:text-white font-medium focus:outline-none focus:border-blue-500 transition-all"
                     required
                   />
+                  </div>
                 </div>
 
                 {/* Email */}
+                <div>
+                <label htmlFor="email" className="block text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-2">Work email</label>
                 <input
+                  id="email"
                   name="email"
                   value={formData.email}
                   onChange={handleChange}
                   type="email"
                   placeholder="john@company.com"
+                  autoComplete="email"
                   className="w-full bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl px-6 py-4 text-slate-900 dark:text-white font-medium focus:outline-none focus:border-blue-500 transition-all"
                   required
                 />
+                </div>
 
                 {/* Service + Preferred Time */}
                 <div className="grid md:grid-cols-2 gap-6">
+                  <div>
+                  <label htmlFor="service_requirement" className="block text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-2">Service required</label>
                   <select
+                    id="service_requirement"
                     name="service_requirement"
                     value={formData.service_requirement}
                     onChange={handleChange}
@@ -322,8 +344,12 @@ export const ContactPage: React.FC = () => {
                     <option>Web Development</option>
                     <option>Other Technical Support</option>
                   </select>
+                  </div>
 
+                  <div>
+                  <label htmlFor="preferred_time" className="block text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-2">Preferred call time</label>
                   <input
+                    id="preferred_time"
                     type="time"
                     name="preferred_time"
                     value={formData.preferred_time}
@@ -331,10 +357,14 @@ export const ContactPage: React.FC = () => {
                     className="w-full bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl px-6 py-4 text-slate-900 dark:text-white font-medium focus:outline-none focus:border-blue-500 transition-all cursor-pointer [color-scheme:light] dark:[color-scheme:dark] [&::-webkit-calendar-picker-indicator]:cursor-pointer [&::-webkit-calendar-picker-indicator]:opacity-60 hover:[&::-webkit-calendar-picker-indicator]:opacity-100 [&::-webkit-calendar-picker-indicator]:transition-opacity"
                     required
                   />
+                  </div>
                 </div>
 
                 {/* Project Details */}
+                <div>
+                <label htmlFor="project_details" className="block text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-2">Project details</label>
                 <textarea
+                  id="project_details"
                   name="project_details"
                   value={formData.project_details}
                   onChange={handleChange}
@@ -343,6 +373,7 @@ export const ContactPage: React.FC = () => {
                   className="w-full bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl px-6 py-4 text-slate-900 dark:text-white font-medium focus:outline-none focus:border-blue-500 transition-all resize-none"
                   required
                 ></textarea>
+                </div>
 
                 <button
                   type="submit"

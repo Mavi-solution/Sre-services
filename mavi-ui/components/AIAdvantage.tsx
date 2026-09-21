@@ -9,8 +9,8 @@ export const AIAdvantage: React.FC = () => {
 
       <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 relative z-10">
         <div className="text-center mb-20">
-          <h2 className="text-xs font-bold text-green-600 dark:text-green-400 uppercase tracking-[0.3em] mb-4">Intelligence Layer</h2>
-          <h3 className="text-4xl md:text-5xl font-black text-slate-900 dark:text-white uppercase">THE Maxi Vision AI ADVANTAGE</h3>
+          <p className="text-xs font-bold text-green-600 dark:text-green-400 uppercase tracking-[0.3em] mb-4">Intelligence Layer</p>
+          <h2 className="text-4xl md:text-5xl font-black text-slate-900 dark:text-white uppercase">THE MAVISOLUTION AI ADVANTAGE</h2>
         </div>
 
         <div className="grid md:grid-cols-2 gap-8 lg:gap-12">
@@ -20,7 +20,7 @@ export const AIAdvantage: React.FC = () => {
               <div className="w-12 h-12 rounded-2xl bg-blue-500/10 flex items-center justify-center text-blue-600 dark:text-blue-400 mb-8">
                 <i className="fa-solid fa-filter text-xl"></i>
               </div>
-              <h4 className="text-2xl font-black text-slate-900 dark:text-white mb-6 uppercase tracking-tight">Smart Alert Aggregation</h4>
+              <h3 className="text-2xl font-black text-slate-900 dark:text-white mb-6 uppercase tracking-tight">Smart Alert Aggregation</h3>
               <p className="text-slate-600 dark:text-slate-400 text-sm leading-relaxed mb-8">
                 "When a server goes down, it often sends hundreds of different alerts. This creates panic. Our AI tools group these into one single 'Root Cause' incident."
               </p>
@@ -62,11 +62,11 @@ export const AIAdvantage: React.FC = () => {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
                 <div className="p-4 bg-red-500/5 border border-red-500/10 rounded-xl">
-                  <span className="text-[8px] font-black text-red-500 uppercase tracking-widest block mb-2">Before Maxi Vision</span>
+                  <span className="text-[8px] font-black text-red-500 uppercase tracking-widest block mb-2">Before MaviSolution</span>
                   <p className="text-[10px] text-slate-500">450 alerts sent to the CEO's phone.</p>
                 </div>
                 <div className="p-4 bg-green-500/5 border border-green-500/10 rounded-xl">
-                  <span className="text-[8px] font-black text-green-600 uppercase tracking-widest block mb-2">After Maxi Vision</span>
+                  <span className="text-[8px] font-black text-green-600 uppercase tracking-widest block mb-2">After MaviSolution</span>
                   <p className="text-[10px] text-slate-900 dark:text-white">1 clean notification: 'DB auto-restarted. Zero impact.'</p>
                 </div>
               </div>
@@ -84,7 +84,7 @@ export const AIAdvantage: React.FC = () => {
               <div className="w-12 h-12 rounded-2xl bg-green-500/10 flex items-center justify-center text-green-600 dark:text-green-400 mb-8">
                 <i className="fa-solid fa-magnifying-glass-chart text-xl"></i>
               </div>
-              <h4 className="text-2xl font-black text-slate-900 dark:text-white mb-6 uppercase tracking-tight">AI-Powered Log Analysis</h4>
+              <h3 className="text-2xl font-black text-slate-900 dark:text-white mb-6 uppercase tracking-tight">AI-Powered Log Analysis</h3>
               <p className="text-slate-600 dark:text-slate-400 text-sm leading-relaxed mb-6">
                 "Reading thousands of lines of server logs is impossible for humans. Our AI engine scans them in seconds to find the 'needle in the haystack' that triggered an issue."
               </p>

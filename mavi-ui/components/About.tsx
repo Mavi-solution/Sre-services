@@ -12,7 +12,7 @@ export const About: React.FC = () => {
             </div>
             <h2 className="text-4xl md:text-5xl font-black text-slate-900 dark:text-white mb-8 tracking-tight uppercase">MISSION OVERVIEW</h2>
             <p className="text-xl text-slate-600 dark:text-slate-300 leading-relaxed font-light mb-10 italic border-l-4 border-[#2E7CF6] pl-8">
-              "Maxi Vision is a high-performance Site Reliability Engineering (SRE) and Web Development startup that bridges the gap between 'shipping code' and 'staying online.' We specialize in building and protecting digital infrastructure for scaling startups and established enterprises."
+              "MaviSolution is a high-performance Site Reliability Engineering (SRE) and Web Development startup that bridges the gap between 'shipping code' and 'staying online.' We specialize in building and protecting digital infrastructure for scaling startups and established enterprises."
             </p>
 
             <div className="space-y-6">

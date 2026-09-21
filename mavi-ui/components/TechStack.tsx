@@ -39,17 +39,17 @@ export const TechStack: React.FC = () => {
     <section id="resources" className="py-24 relative overflow-hidden bg-white/[0.01] dark:bg-transparent">
       <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 relative z-10">
         <div className="text-center mb-16">
-          <h2 className="text-[10px] font-black text-[#2E7CF6] uppercase tracking-[0.4em] mb-4">The Monitronix Stack</h2>
-          <h3 className="text-4xl md:text-5xl font-black text-slate-900 dark:text-white uppercase tracking-tight">TRUSTED BY INDUSTRY STANDARDS</h3>
+          <p className="text-[10px] font-black text-[#2E7CF6] uppercase tracking-[0.4em] mb-4">The MaviSolution Stack</p>
+          <h2 className="text-4xl md:text-5xl font-black text-slate-900 dark:text-white uppercase tracking-tight">TRUSTED BY INDUSTRY STANDARDS</h2>
           <p className="mt-4 text-slate-500 dark:text-slate-400 text-[10px] font-black uppercase tracking-[0.2em]">Reliability through world-class tooling</p>
         </div>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-x-8 gap-y-12">
           {categories.map((cat, idx) => (
             <div key={idx} className="flex flex-col gap-4">
-              <h4 className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.2em] border-l-2 border-blue-500 pl-4 mb-1">
+              <h3 className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.2em] border-l-2 border-blue-500 pl-4 mb-1">
                 {cat.label}
-              </h4>
+              </h3>
               <div className="space-y-3">
                 {cat.tools.map((tool, tIdx) => (
                   <div 

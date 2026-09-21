@@ -46,8 +46,8 @@ export const ServicesTable: React.FC = () => {
     <section id="services-table" className="py-24 relative overflow-hidden bg-slate-50 dark:bg-slate-950/50 transition-colors duration-300">
       <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 relative z-10 text-left">
         <div className="mb-16">
-          <h2 className="text-xs font-bold text-blue-600 dark:text-blue-400 uppercase tracking-[0.4em] mb-4">Service Catalog</h2>
-          <h3 className="text-4xl md:text-5xl font-black text-slate-900 dark:text-white uppercase tracking-tight">Support & Monitoring <br /><span className="text-moving-gradient">Categories</span></h3>
+          <p className="text-xs font-bold text-blue-600 dark:text-blue-400 uppercase tracking-[0.4em] mb-4">Service Catalog</p>
+          <h2 className="text-4xl md:text-5xl font-black text-slate-900 dark:text-white uppercase tracking-tight">Support & Monitoring <br /><span className="text-moving-gradient">Categories</span></h2>
         </div>
 
         <div className="glass-card border border-slate-200 dark:border-white/10 rounded-[32px] overflow-hidden shadow-2xl transition-all duration-300">

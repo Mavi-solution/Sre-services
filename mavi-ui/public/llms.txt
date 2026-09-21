@@ -1,0 +1,43 @@
+# MaviSolution
+
+> MaviSolution (legal entity: Mavi Solution Pvt. Ltd.) is a B2B Site Reliability
+> Engineering (SRE), DevOps automation, and cloud managed-services firm. We run
+> 24/7 monitoring, incident response, and infrastructure-as-code for startups and
+> enterprises across India, the UAE, and the USA.
+
+MaviSolution bridges the gap between shipping code and staying online. We replace
+reactive, manual operations with software-driven reliability: observability,
+automated incident response, Infrastructure as Code, and performance engineering.
+
+Contact: support@mavisolution.com
+Legal jurisdiction for service agreements: Chennai, India.
+
+## Services
+
+- [SRE as a Service](https://www.mavisolution.com/services/sre-as-a-service): 24/7 incident response and on-call, root cause analysis (RCA), Service Level Objective (SLO) management, and error-budget tracking to reduce Mean Time To Recovery (MTTR).
+- [Monitoring & Observability](https://www.mavisolution.com/services/monitoring-observability): Real-time dashboards, distributed request tracing, centralized log aggregation, and intelligent anomaly-detection alerting.
+- [DevOps Automation](https://www.mavisolution.com/services/devops-automation): High-performance CI/CD pipelines, Infrastructure as Code with Terraform and Ansible, automated security scanning, and Kubernetes container orchestration.
+- [CloudOps](https://www.mavisolution.com/services/cloudops): Cloud cost optimization (FinOps), multi-cloud and hybrid-cloud strategy, dynamic auto-scaling, and disaster recovery planning.
+- [Performance Engineering](https://www.mavisolution.com/services/performance-engineering): Continuous load and stress testing, capacity planning, application performance tuning, and database optimization.
+- [Web Hosting for SMBs](https://www.mavisolution.com/services/web-hosting-smb): Fully managed hosting with a Web Application Firewall (WAF), daily automated backups, global CDN delivery, and free SSL.
+- [Offshore Development Center](https://www.mavisolution.com/services/offshore-development-center): Dedicated full-stack engineering teams operating as an extension of an in-house department, with end-to-end project management.
+
+## Company
+
+- [About](https://www.mavisolution.com/about): MaviSolution's reliability practice rests on five pillars: observability and monitoring, incident management, Infrastructure as Code, performance engineering, and cloud-native scaling.
+- [Case Studies](https://www.mavisolution.com/case-studies): An SRE engagement that reduced alert volume during deployment windows through smart alert aggregation.
+- [Contact](https://www.mavisolution.com/contact): Reach the SRE team at support@mavisolution.com.
+
+## Legal
+
+- [Privacy Policy](https://www.mavisolution.com/privacy)
+- [Terms and Conditions](https://www.mavisolution.com/terms): Service agreements are governed by the laws of India, with jurisdiction in Chennai.
+
+## Notes
+
+- Service regions: India, United Arab Emirates, United States.
+- TODO(mavisolution): no registered office address is published. "Chennai" above
+  refers to the legal jurisdiction named in the Terms, not a business address.
+  Add a verified postal address here and in data/site.ts when available.
+- TODO(mavisolution): verify the LinkedIn company URL before listing it here.
+  The slug currently used in the site source could not be confirmed automatically.

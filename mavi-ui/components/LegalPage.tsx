@@ -1,14 +1,14 @@
 
 import React, { useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { motion } from 'motion/react';
 import { Shield, FileText, ArrowLeft } from 'lucide-react';
 
 interface LegalPageProps {
   type: 'privacy' | 'terms';
-  onBack: () => void;
 }
 
-export const LegalPage: React.FC<LegalPageProps> = ({ type, onBack }) => {
+export const LegalPage: React.FC<LegalPageProps> = ({ type }) => {
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [type]);
@@ -48,7 +48,7 @@ export const LegalPage: React.FC<LegalPageProps> = ({ type, onBack }) => {
         },
         {
           heading: '2. Client Responsibilities',
-          text: 'To ensure "Maxi Vision" for your systems, the Client must: - Provide necessary access to cloud consoles (AWS, Azure, Vercel, etc.) and code repositories.- Appoint a technical point of contact for emergency escalations.- Ensure all third-party licenses (e.g., Splunk, Datadog) are active and paid.'
+          text: 'To ensure total infrastructure visibility for your systems, the Client must: - Provide necessary access to cloud consoles (AWS, Azure, Vercel, etc.) and code repositories.- Appoint a technical point of contact for emergency escalations.- Ensure all third-party licenses (e.g., Splunk, Datadog) are active and paid.'
         },
         {
           heading: '3. Fees and Payment',
@@ -88,12 +88,12 @@ export const LegalPage: React.FC<LegalPageProps> = ({ type, onBack }) => {
       className="pt-32 pb-24 min-h-screen bg-slate-50 dark:bg-[#050B14]"
     >
       <div className="max-w-4xl mx-auto px-6 sm:px-8 lg:px-12">
-        <button
-          onClick={onBack}
+        <Link
+          to="/"
           className="flex items-center gap-2 text-xs font-black text-slate-500 hover:text-blue-600 dark:hover:text-blue-400 transition-colors uppercase tracking-widest mb-12"
         >
-          <ArrowLeft size={16} /> Back to Home
-        </button>
+          <ArrowLeft size={16} aria-hidden="true" /> Back to Home
+        </Link>
 
         <div className="flex items-center gap-6 mb-8">
           <div className="p-4 rounded-2xl bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 shadow-sm">
