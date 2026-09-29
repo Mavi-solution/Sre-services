@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Header } from './components/Header';
 import { Hero } from './components/Hero';
@@ -16,9 +15,12 @@ import { LegalPage } from './components/LegalPage';
 import { Footer } from './components/Footer';
 import { Chatbot } from './components/Chatbot';
 import { ThemeToggle } from './components/ThemeToggle';
+import Blog from './components/Blog';
 
 const App: React.FC = () => {
-  const [view, setView] = useState<'home' | 'contact' | 'privacy' | 'terms'>('home');
+  const [view, setView] = useState<
+    'home' | 'contact' | 'privacy' | 'terms' | 'blog'
+  >('home');
 
   // Handle back button / hash changes for a better SPA feel
   useEffect(() => {
@@ -29,57 +31,94 @@ const App: React.FC = () => {
         setView('privacy');
       } else if (window.location.hash === '#terms') {
         setView('terms');
+      } else if (window.location.hash === '#blog') {
+        setView('blog');
       } else {
         setView('home');
       }
     };
+
     window.addEventListener('hashchange', handleHashChange);
     handleHashChange();
+
     return () => window.removeEventListener('hashchange', handleHashChange);
   }, []);
 
-  const navigateTo = (newView: 'home' | 'contact' | 'privacy' | 'terms') => {
+  const navigateTo = (
+    newView: 'home' | 'contact' | 'privacy' | 'terms' | 'blog'
+  ) => {
     setView(newView);
+
     if (newView === 'contact') {
       window.location.hash = 'contact-page';
     } else if (newView === 'privacy') {
       window.location.hash = 'privacy';
     } else if (newView === 'terms') {
       window.location.hash = 'terms';
+    } else if (newView === 'blog') {
+      window.location.hash = 'blog';
     } else {
       window.location.hash = '';
     }
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    });
   };
 
   return (
     <div className="flex flex-col min-h-screen bg-slate-50 dark:bg-[#050B14] text-slate-900 dark:text-slate-100 transition-colors duration-300">
-      <Header currentView={view} onNavigate={navigateTo} />
+
+      <Header
+        currentView={view}
+        onNavigate={navigateTo}
+      />
+
       <main className="flex-grow">
+
         {view === 'home' ? (
           <>
             <Hero onContactClick={() => navigateTo('contact')} />
+
             <About />
+
             <SREPhilosophy />
+
             <section id="what-we-do">
               <ServicePortfolio />
               <ClientsSection />
               <ServicesTable />
               <AIAdvantage />
             </section>
+
             <CaseStudy />
+
             <TechStack />
-            <ContactSection onContactClick={() => navigateTo('contact')} />
+
+            <ContactSection
+              onContactClick={() => navigateTo('contact')}
+            />
           </>
         ) : view === 'contact' ? (
           <ContactPage />
+        ) : view === 'blog' ? (
+          <Blog />
         ) : (
-          <LegalPage type={view as 'privacy' | 'terms'} onBack={() => navigateTo('home')} />
+          <LegalPage
+            type={view as 'privacy' | 'terms'}
+            onBack={() => navigateTo('home')}
+          />
         )}
+
       </main>
+
       <ThemeToggle />
+
       <Chatbot />
+
       <Footer onNavigate={navigateTo} />
+
     </div>
   );
 };

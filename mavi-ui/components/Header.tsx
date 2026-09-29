@@ -1,9 +1,8 @@
-
 import React, { useState, useEffect, useRef } from 'react';
 
 interface HeaderProps {
-  currentView: 'home' | 'contact' | 'privacy' | 'terms';
-  onNavigate: (view: 'home' | 'contact' | 'privacy' | 'terms') => void;
+  currentView: 'home' | 'contact' | 'privacy' | 'terms' | 'blog';
+  onNavigate: (view: 'home' | 'contact' | 'privacy' | 'terms' | 'blog') => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({ currentView, onNavigate }) => {
@@ -35,12 +34,13 @@ export const Header: React.FC<HeaderProps> = ({ currentView, onNavigate }) => {
         const element = document.getElementById(id);
         if (element) {
           const rect = element.getBoundingClientRect();
-          // Precise detection: if section is top-most
+
           if (rect.top <= 120) {
             current = id;
           }
         }
       }
+
       setActiveSection(current);
     };
 
@@ -50,11 +50,16 @@ export const Header: React.FC<HeaderProps> = ({ currentView, onNavigate }) => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, [currentView]);
 
-  const handleNavClick = (e: React.MouseEvent, id: string, href: string) => {
+  const handleNavClick = (
+    e: React.MouseEvent,
+    id: string,
+    href: string
+  ) => {
     e.preventDefault();
 
     if (currentView !== 'home') {
       onNavigate('home');
+
       setTimeout(() => scrollToElement(id), 150);
     } else {
       scrollToElement(id);
@@ -66,8 +71,10 @@ export const Header: React.FC<HeaderProps> = ({ currentView, onNavigate }) => {
 
   const scrollToElement = (id: string) => {
     const element = document.getElementById(id);
+
     if (element) {
       scrollSnapRef.current = true;
+
       const offset = 80;
       const bodyRect = document.body.getBoundingClientRect().top;
       const elementRect = element.getBoundingClientRect().top;
@@ -85,6 +92,12 @@ export const Header: React.FC<HeaderProps> = ({ currentView, onNavigate }) => {
     }
   };
 
+  const handleBlogClick = () => {
+    onNavigate('blog');
+    setIsMenuOpen(false);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   const blueStyle = { color: '#0066CC' };
   const greenStyle = { color: '#65D249' };
 
@@ -92,74 +105,135 @@ export const Header: React.FC<HeaderProps> = ({ currentView, onNavigate }) => {
     <header className="sticky top-0 z-50 bg-white/90 dark:bg-[#050B14]/90 backdrop-blur-xl border-b border-slate-200 dark:border-white/5 transition-colors duration-300">
       <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12">
         <div className="flex justify-between items-center h-20">
-          <div className="flex items-center gap-3 cursor-pointer" onClick={() => onNavigate('home')}>
+
+          {/* Logo */}
+          <div
+            className="flex items-center gap-3 cursor-pointer"
+            onClick={() => onNavigate('home')}
+          >
             <img
               src="https://i.postimg.cc/kgkTTnFH/Picsart-26-01-24-22-46-24-348.png"
               alt="Monitronix Logo"
               className="h-14 w-auto object-contain"
             />
+
             <div className="text-2xl md:text-3xl font-black tracking-tighter flex items-baseline font-sans">
               <span style={blueStyle}>Ma</span>
               <span style={greenStyle}>Vi</span>
             </div>
           </div>
 
+          {/* Desktop Navigation */}
           <div className="hidden md:flex items-center gap-6 lg:gap-10">
+
             <nav className="flex items-center gap-6 lg:gap-8">
+
               {navLinks.map((link) => {
-                const isActive = currentView === 'home' && activeSection === link.id;
+                const isActive =
+                  currentView === 'home' &&
+                  activeSection === link.id;
+
                 return (
                   <a
                     key={link.name}
                     href={link.href}
-                    onClick={(e) => handleNavClick(e, link.id, link.href)}
-                    className={`relative py-2 text-[11px] font-black uppercase tracking-[0.2em] transition-colors group ${isActive
-                      ? 'text-blue-600 dark:text-blue-400'
-                      : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
-                      }`}
+                    onClick={(e) =>
+                      handleNavClick(e, link.id, link.href)
+                    }
+                    className={`relative py-2 text-[11px] font-black uppercase tracking-[0.2em] transition-colors group ${
+                      isActive
+                        ? 'text-blue-600 dark:text-blue-400'
+                        : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                    }`}
                   >
                     {link.name}
-                    {/* Dynamic underline appearing only on hover, as requested */}
+
                     <span className="absolute bottom-0 left-0 w-full h-[2px] bg-gradient-to-r from-[#0066CC] to-[#65D249] transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left ease-out"></span>
                   </a>
                 );
               })}
+
+              {/* BLOG */}
+              <button
+                onClick={handleBlogClick}
+                className={`relative py-2 text-[11px] font-black uppercase tracking-[0.2em] transition-colors group ${
+                  currentView === 'blog'
+                    ? 'text-blue-600 dark:text-blue-400'
+                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                }`}
+              >
+                BLOG
+
+                <span className="absolute bottom-0 left-0 w-full h-[2px] bg-gradient-to-r from-[#0066CC] to-[#65D249] transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left ease-out"></span>
+              </button>
+
             </nav>
 
+            {/* Contact Button */}
             <button
               onClick={() => onNavigate('contact')}
-              className={`px-8 py-2.5 text-[11px] font-black uppercase tracking-widest rounded-lg hover:scale-105 transition-all shadow-lg ${currentView === 'contact'
-                ? 'bg-slate-900 dark:bg-white text-white dark:text-slate-950'
-                : 'bg-gradient-to-r from-[#42E695] to-[#3BB2B8] text-slate-950 shadow-green-500/20'
-                }`}
+              className={`px-8 py-2.5 text-[11px] font-black uppercase tracking-widest rounded-lg hover:scale-105 transition-all shadow-lg ${
+                currentView === 'contact'
+                  ? 'bg-slate-900 dark:bg-white text-white dark:text-slate-950'
+                  : 'bg-gradient-to-r from-[#42E695] to-[#3BB2B8] text-slate-950 shadow-green-500/20'
+              }`}
             >
               CONTACT
             </button>
           </div>
 
+          {/* Mobile Menu Button */}
           <div className="md:hidden flex items-center gap-4">
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
               className="p-2 text-slate-600 dark:text-slate-400"
             >
-              <i className={`fa-solid ${isMenuOpen ? 'fa-xmark' : 'fa-bars'} text-2xl`}></i>
+              <i
+                className={`fa-solid ${
+                  isMenuOpen ? 'fa-xmark' : 'fa-bars'
+                } text-2xl`}
+              ></i>
             </button>
           </div>
+
         </div>
       </div>
 
+      {/* Mobile Menu */}
       {isMenuOpen && (
         <div className="md:hidden bg-white dark:bg-[#050B14] border-b border-slate-200 dark:border-white/10 py-8 px-6 space-y-6 animate-in slide-in-from-top duration-300">
+
           {navLinks.map((link) => (
             <a
               key={link.name}
               href={link.href}
-              onClick={(e) => handleNavClick(e, link.id, link.href)}
-              className={`block text-sm font-bold uppercase tracking-widest transition-colors ${currentView === 'home' && activeSection === link.id ? 'text-blue-600' : 'text-slate-700 dark:text-slate-300'}`}
+              onClick={(e) =>
+                handleNavClick(e, link.id, link.href)
+              }
+              className={`block text-sm font-bold uppercase tracking-widest transition-colors ${
+                currentView === 'home' &&
+                activeSection === link.id
+                  ? 'text-blue-600'
+                  : 'text-slate-700 dark:text-slate-300'
+              }`}
             >
               {link.name}
             </a>
           ))}
+
+          {/* Mobile Blog */}
+          <button
+            onClick={handleBlogClick}
+            className={`block w-full text-left text-sm font-bold uppercase tracking-widest transition-colors ${
+              currentView === 'blog'
+                ? 'text-blue-600'
+                : 'text-slate-700 dark:text-slate-300'
+            }`}
+          >
+            BLOG
+          </button>
+
+          {/* Mobile Contact */}
           <button
             onClick={() => {
               onNavigate('contact');
@@ -169,6 +243,7 @@ export const Header: React.FC<HeaderProps> = ({ currentView, onNavigate }) => {
           >
             CONTACT
           </button>
+
         </div>
       )}
     </header>
