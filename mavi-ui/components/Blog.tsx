@@ -1,87 +1,257 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+
+type BlogView = "listing" | "article";
+
+interface BlogProps {
+  onNavigate?: (view: string) => void;
+}
 
 interface BlogPost {
   id: number;
   category: string;
   title: string;
-  excerpt: string;
   date: string;
-  image?: string;
+  readTime: string;
+  image: string;
+  excerpt: string;
+  featured?: boolean;
 }
 
 const BLOG_IMAGES = {
-  hero: "/blog/sre-outsourcing-2026-hero.png",
-  decisionGuide: "/blog/sre-decision-guide.png",
-  operatingModels: "/blog/sre-operating-models.png",
-  poster: "/blog/mavi-sre-support-poster.png",
+  // ============================================================
+  // BLOG 1 IMAGES
+  // ============================================================
+  sreHero: "/blog/sre-outsourcing-2026-hero.png",
+  sreDecisionGuide: "/blog/sre-decision-guide.png",
+  sreOperatingModels: "/blog/sre-operating-models.png",
+  srePoster: "/blog/mavi-sre-support-poster.png",
+
+  // ============================================================
+  // BLOG 2 IMAGE
+  // ============================================================
+  monitoringObservabilityHero:
+    "/blog/monitoring-vs-observability-hero.png",
 };
 
-const blogPosts: BlogPost[] = [
+const BLOG_POSTS: BlogPost[] = [
   {
     id: 1,
-    category: "SRE & APPLICATION SUPPORT",
+    category: "SRE & RELIABILITY",
     title:
       "SRE Outsourcing in 2026: When Does Your Business Actually Need It?",
-    excerpt:
-      "When should a growing business outsource SRE? Understand the reliability gaps, operating models, provider questions, and practical steps before deciding how much support you need.",
     date: "September 2026",
-    image: BLOG_IMAGES.hero,
+    readTime: "10 min read",
+    image: BLOG_IMAGES.sreHero,
+    excerpt:
+      "When should a growing business outsource SRE? Compare in-house, hybrid and managed support, learn what to ask providers, and plan a practical first step.",
+    featured: true,
   },
   {
     id: 2,
-    category: "24/7 SRE SUPPORT",
+    category: "OBSERVABILITY",
     title:
-      "Extensive Offshore Support for Applications During Non-Business Hours",
+      "Monitoring vs Observability in 2026: What Does Your Business Actually Need?",
+    date: "October 2026",
+    readTime: "9 min read",
+    image: BLOG_IMAGES.monitoringObservabilityHero,
     excerpt:
-      "Dedicated production support, monitoring, alerting, and incident response to help protect application reliability outside normal business hours.",
-    date: "September 2026",
-    image: BLOG_IMAGES.poster,
+      "Monitoring tells you when a known risk becomes a problem. Observability helps you understand why unexpected problems happen.",
   },
   {
     id: 3,
     category: "OBSERVABILITY",
-    title:
-      "Why Observability Matters for Modern Production Applications",
-    excerpt:
-      "Understand how application visibility, meaningful metrics, logs, traces, and actionable alerts help engineering teams understand production behaviour.",
+    title: "Why Observability Matters for Modern Applications",
     date: "Coming Soon",
+    readTime: "",
+    image: BLOG_IMAGES.sreHero,
+    excerpt:
+      "Understand how connected metrics, logs and traces help teams investigate production issues faster.",
   },
   {
     id: 4,
     category: "CLOUD & DEVOPS",
     title:
-      "How Proactive Production Monitoring Helps Reduce Operational Risk",
-    excerpt:
-      "Explore how proactive monitoring and structured operational practices can help teams identify issues before they become larger customer-impacting incidents.",
+      "How Proactive Production Monitoring Improves Application Reliability",
     date: "Coming Soon",
+    readTime: "",
+    image: BLOG_IMAGES.srePoster,
+    excerpt:
+      "Discover how proactive monitoring can help teams detect issues earlier and protect customer-facing applications.",
   },
 ];
 
-const Blog: React.FC = () => {
-  const [selectedPost, setSelectedPost] = useState<BlogPost | null>(null);
+// ============================================================
+// REUSABLE COMPONENTS
+// ============================================================
 
-  const openPost = (post: BlogPost) => {
-    if (post.date === "Coming Soon") {
+const SectionHeading = ({
+  children,
+}: {
+  children: React.ReactNode;
+}) => {
+  return (
+    <h2 className="text-3xl md:text-4xl font-bold text-slate-900 dark:text-white leading-tight">
+      {children}
+    </h2>
+  );
+};
+
+const ArticleParagraph = ({
+  children,
+}: {
+  children: React.ReactNode;
+}) => {
+  return (
+    <p className="mt-7 text-lg leading-8 text-slate-700 dark:text-slate-300">
+      {children}
+    </p>
+  );
+};
+
+const ArticleList = ({
+  items,
+}: {
+  items: React.ReactNode[];
+}) => {
+  return (
+    <ul className="mt-7 space-y-4 pl-6 list-disc text-lg leading-8 text-slate-700 dark:text-slate-300">
+      {items.map((item, index) => (
+        <li key={index}>{item}</li>
+      ))}
+    </ul>
+  );
+};
+
+const ImageBlock = ({
+  src,
+  alt,
+  caption,
+}: {
+  src: string;
+  alt: string;
+  caption?: string;
+}) => {
+  return (
+    <figure className="mt-12">
+      <img
+        src={src}
+        alt={alt}
+        className="w-full rounded-2xl border border-slate-200 dark:border-slate-700 shadow-md"
+      />
+
+      {caption && (
+        <figcaption className="mt-3 text-center text-sm leading-6 text-slate-500 dark:text-slate-400">
+          {caption}
+        </figcaption>
+      )}
+    </figure>
+  );
+};
+
+const InfoCard = ({
+  title,
+  children,
+}: {
+  title: string;
+  children: React.ReactNode;
+}) => {
+  return (
+    <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-[#0B1422] p-6">
+      <h3 className="text-xl font-bold text-slate-900 dark:text-white">
+        {title}
+      </h3>
+
+      <div className="mt-3 text-base leading-7 text-slate-700 dark:text-slate-300">
+        {children}
+      </div>
+    </div>
+  );
+};
+
+const NumberStep = ({
+  number,
+  title,
+  children,
+}: {
+  number: number;
+  title: string;
+  children: React.ReactNode;
+}) => {
+  return (
+    <div className="flex gap-5">
+      <div className="flex-shrink-0 w-10 h-10 rounded-full bg-[#0066CC] text-white flex items-center justify-center font-bold">
+        {number}
+      </div>
+
+      <div>
+        <h3 className="text-xl font-bold text-slate-900 dark:text-white">
+          {title}
+        </h3>
+
+        <div className="mt-2 text-lg leading-8 text-slate-700 dark:text-slate-300">
+          {children}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// ============================================================
+// MAIN BLOG COMPONENT
+// ============================================================
+
+const Blog: React.FC<BlogProps> = ({ onNavigate }) => {
+  const [view, setView] = useState<BlogView>("listing");
+  const [selectedPost, setSelectedPost] = useState<number | null>(
+    null
+  );
+
+  useEffect(() => {
+    const hash = window.location.hash;
+
+    if (hash.startsWith("#blog/")) {
+      const id = Number(hash.replace("#blog/", ""));
+
+      if (BLOG_POSTS.some((post) => post.id === id)) {
+        setSelectedPost(id);
+        setView("article");
+      }
+    } else if (hash === "#blog") {
+      setView("listing");
+      setSelectedPost(null);
+    }
+  }, []);
+
+  const openArticle = (id: number) => {
+    setSelectedPost(id);
+    setView("article");
+
+    window.location.hash = `blog/${id}`;
+
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+  };
+
+  const goBackToBlog = () => {
+    setSelectedPost(null);
+    setView("listing");
+
+    window.location.hash = "blog";
+
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+  };
+
+  const goContact = () => {
+    if (onNavigate) {
+      onNavigate("contact");
       return;
     }
 
-    setSelectedPost(post);
-    window.scrollTo({
-      top: 0,
-      behavior: "smooth",
-    });
-  };
-
-  const goBack = () => {
-    setSelectedPost(null);
-
-    window.scrollTo({
-      top: 0,
-      behavior: "smooth",
-    });
-  };
-
-  const goToContact = () => {
     window.location.hash = "contact-page";
 
     window.scrollTo({
@@ -90,1077 +260,1501 @@ const Blog: React.FC = () => {
     });
   };
 
-  /*
-   * ============================================================
-   * FULL BLOG ARTICLE
-   * ============================================================
-   */
-
-  const renderSreOutsourcingArticle = () => (
-    <article className="mx-auto max-w-4xl">
-      {/* Category */}
-      <div className="mb-6">
-        <span className="inline-flex rounded-full border border-blue-400/20 bg-blue-500/10 px-4 py-2 text-xs font-semibold tracking-[0.16em] text-blue-400">
-          SRE & APPLICATION SUPPORT
-        </span>
-      </div>
-
-      {/* Title */}
-      <h1 className="text-4xl font-bold leading-[1.12] tracking-tight text-white md:text-5xl lg:text-6xl">
-        SRE Outsourcing in 2026: When Does Your Business Actually Need It?
-      </h1>
-
-      {/* Date */}
-      <p className="mt-6 text-sm font-medium text-blue-300">
-        September 2026
-      </p>
-
-      {/* Hero Image */}
-      <div className="mt-10 overflow-hidden rounded-2xl border border-white/10 bg-slate-900 shadow-2xl">
-        <img
-          src={BLOG_IMAGES.hero}
-          alt="Healthy monitoring dashboard beside a customer checkout showing a payment failure."
-          className="block h-auto w-full"
-        />
-      </div>
-
-      {/* Article Content */}
-      <div className="mt-12 text-[17px] leading-[1.9] text-slate-300">
-
-        {/* INTRODUCTION */}
-        <section>
-          <p>
-            Your monitoring dashboard says the application is up. Customers
-            say they cannot complete a purchase.
-          </p>
-
-          <p className="mt-7">
-            For a growing business, that gap matters more than a server uptime
-            chart. A failed checkout can interrupt revenue. A slow customer
-            portal can increase support requests. Repeated incidents can pull
-            engineers away from the next release.
-          </p>
-
-          <p className="mt-7">
-            Site reliability engineering (SRE) helps teams measure and improve
-            the experience their services deliver. SRE outsourcing brings in an
-            external team to handle a defined part of that work. The decision
-            is whether that team can close a reliability gap your business
-            cannot address effectively today.
-          </p>
-        </section>
-
-        {/* QUICK ANSWER */}
-        <section className="mt-16">
-          <h2 className="mb-7 text-3xl font-bold leading-tight text-white md:text-4xl">
-            The quick answer
-          </h2>
-
-          <p>
-            Outsource SRE when a customer-facing service is important enough
-            to need dependable monitoring and incident response, but your
-            internal team lacks the coverage, capacity, or specialist skills
-            to provide them consistently.
-          </p>
-
-          <p className="mt-7">
-            You might need help with after-hours incidents, recurring outages,
-            application observability, or a cloud migration. You might instead
-            need a short engagement to establish reliability practices before
-            your own team takes over.
-          </p>
-
-          <p className="mt-7">
-            If your engineers already meet agreed reliability targets, respond
-            sustainably to incidents, and have time to prevent repeat failures,
-            a new outsourced arrangement may add little value. The right scope
-            follows the problem.
-          </p>
-        </section>
-
-        {/* WHAT IS SRE OUTSOURCING */}
-        <section className="mt-16">
-          <h2 className="mb-7 text-3xl font-bold leading-tight text-white md:text-4xl">
-            What is SRE outsourcing?
-          </h2>
-
-          <p>
-            Site reliability engineering applies engineering practices to
-            production operations. Rather than asking only whether a server is
-            running, an SRE team asks whether users can complete important
-            tasks, how reliably they can do so, and what should happen when the
-            experience degrades.
-          </p>
-
-          <p className="mt-7">
-            An outsourced SRE team may support monitoring, alerting, on-call
-            response, incident investigation, infrastructure automation, and
-            reliability improvements. The exact responsibilities depend on the
-            agreement.
-          </p>
-
-          <p className="mt-7">
-            A provider that watches dashboards but cannot investigate an
-            application failure offers a different service from one that can
-            diagnose an incident and help prevent its recurrence.
-          </p>
-
-          <h3 className="mt-10 mb-5 text-2xl font-semibold text-white">
-            Three terms make the work easier to assess:
-          </h3>
-
-          <ul className="space-y-5 pl-6">
-            <li className="list-disc">
-              <strong className="text-white">
-                A service level indicator (SLI)
-              </strong>{" "}
-              measures an aspect of service performance, such as the share of
-              checkouts completed successfully.
-            </li>
-
-            <li className="list-disc">
-              <strong className="text-white">
-                A service level objective (SLO)
-              </strong>{" "}
-              sets an agreed target for that indicator over a defined period.
-            </li>
-
-            <li className="list-disc">
-              <strong className="text-white">
-                An error budget
-              </strong>{" "}
-              describes how much performance below the target the service can
-              tolerate during that period.
-            </li>
-          </ul>
-
-          <p className="mt-8">
-            SLOs help product and engineering leaders decide which reliability
-            issues deserve work. They should reflect the user experience and
-            be refined as the team learns, rather than chosen simply because a
-            percentage sounds impressive.
-          </p>
-
-          <p className="mt-7">
-            For example, a homepage loading successfully is useful to know. For
-            an ecommerce business, successful checkout may be the more
-            important measure.
-          </p>
-        </section>
-
-        {/* WHEN DOES EXTERNAL SRE MAKE SENSE */}
-        <section className="mt-16">
-          <h2 className="mb-7 text-3xl font-bold leading-tight text-white md:text-4xl">
-            When does an external SRE team make sense?
-          </h2>
-
-          {/* Decision Guide Image */}
-          <figure className="my-10 overflow-hidden rounded-2xl border border-white/10 bg-slate-900 shadow-xl">
-            <img
-              src={BLOG_IMAGES.decisionGuide}
-              alt="Flowchart showing when to keep SRE in-house, add hybrid support, or assess managed SRE based on customer impact and team capacity."
-              className="block h-auto w-full"
-            />
-          </figure>
-
-          {/* Reason 1 */}
-          <h3 className="mt-12 mb-5 text-2xl font-semibold text-white">
-            Customers report problems before your alerts do
-          </h3>
-
-          <p>
-            A basic uptime check may pass while sign-in, payment, search, or a
-            third-party integration fails. If support teams regularly discover
-            incidents first, your business needs better visibility into
-            critical user journeys.
-          </p>
-
-          <p className="mt-7">
-            An SRE engagement could begin by identifying those journeys, adding
-            appropriate measurements, and defining who receives an alert. Good
-            alerting should help an on-call person act on significant user
-            impact, rather than send every infrastructure fluctuation to a
-            crowded channel.
-          </p>
-
-          {/* Reason 2 */}
-          <h3 className="mt-12 mb-5 text-2xl font-semibold text-white">
-            The same engineers build the product and handle every incident
-          </h3>
-
-          <p>
-            Developers often know the application better than anyone. Their
-            involvement remains essential when a problem requires a code fix.
-            But if a small group also handles every production alert, routine
-            check, and night-time escalation, it may have too little time to
-            improve the system.
-          </p>
-
-          <p className="mt-7">
-            Outside support can add operational capacity. Before assigning the
-            pager, define what the provider can investigate or change
-            independently, when a developer must join, and who communicates
-            with customers.
-          </p>
-
-          {/* Reason 3 */}
-          <h3 className="mt-12 mb-5 text-2xl font-semibold text-white">
-            Incidents are restored but keep returning
-          </h3>
-
-          <p>
-            Restarting a service may get customers moving again. If the same
-            failure returns next week, the business is still carrying the
-            risk.
-          </p>
-
-          <p className="mt-7">
-            SRE work should include time to examine incidents, update runbooks,
-            improve alerts, and reduce repetitive manual tasks.
-          </p>
-
-          <p className="mt-7">
-            An external partner is useful here only if its scope includes
-            improvement work. Ask what happens after service is restored: Who
-            records the cause? Who proposes a lasting fix? Who has authority to
-            prioritize it?
-          </p>
-
-          {/* Reason 4 */}
-          <h3 className="mt-12 mb-5 text-2xl font-semibold text-white">
-            A launch or migration has created a temporary skills gap
-          </h3>
-
-          <p>
-            A new customer-facing application, cloud migration, or change in
-            traffic patterns can expose problems the current team has not had
-            to solve before. Hiring a permanent specialist may be sensible over
-            time, but the immediate need could be narrower: a production
-            readiness review, improved observability, safer deployments, or
-            help during a defined launch window.
-          </p>
-
-          <p className="mt-7">
-            In that situation, consider a time-limited SRE engagement with
-            clear deliverables and knowledge transfer. It gives your team a
-            way to address the current risk while deciding what capability it
-            needs long term.
-          </p>
-
-          {/* Reason 5 */}
-          <h3 className="mt-12 mb-5 text-2xl font-semibold text-white">
-            You need support across multiple operating hours
-          </h3>
-
-          <p>
-            A business serving customers in India, the UAE, Singapore, and
-            Malaysia should examine when its users are active and when its own
-            engineers can respond. These markets span several time zones; an
-            incident late in one team's working day may affect another market
-            during an active period.
-          </p>
-
-          <p className="mt-7">
-            That does not mean every application needs round-the-clock cover.
-            Start with the hours when failure would have the greatest customer
-            or commercial impact. Then decide whether extended on-call
-            support, a shared rotation, or continuous coverage is justified.
-          </p>
-        </section>
-
-        {/* OPERATING MODELS */}
-        <section className="mt-16">
-          <h2 className="mb-7 text-3xl font-bold leading-tight text-white md:text-4xl">
-            Outsourced, in-house, or hybrid: which model fits?
-          </h2>
-
-          {/* Operating Models Image */}
-          <figure className="my-10 overflow-hidden rounded-2xl border border-white/10 bg-slate-900 shadow-xl">
-            <img
-              src={BLOG_IMAGES.operatingModels}
-              alt="Comparison of in-house, hybrid, and managed SRE by best fit, team ownership, support scope, and risks to watch."
-              className="block h-auto w-full"
-            />
-          </figure>
-
-          {/* Comparison Table */}
-          <div className="mt-10 overflow-hidden rounded-2xl border border-white/10">
-            <div className="overflow-x-auto">
-              <table className="min-w-[760px] w-full border-collapse text-left">
-                <thead>
-                  <tr className="bg-white/5">
-                    <th className="border-b border-white/10 px-5 py-5 text-sm font-semibold text-white">
-                      Situation
-                    </th>
-
-                    <th className="border-b border-white/10 px-5 py-5 text-sm font-semibold text-white">
-                      Likely starting model
-                    </th>
-
-                    <th className="border-b border-white/10 px-5 py-5 text-sm font-semibold text-white">
-                      What to protect
-                    </th>
-                  </tr>
-                </thead>
-
-                <tbody>
-                  <tr>
-                    <td className="border-b border-white/10 px-5 py-6 align-top text-slate-300">
-                      A capable internal team needs help during certain hours
-                    </td>
-
-                    <td className="border-b border-white/10 px-5 py-6 align-top font-medium text-blue-300">
-                      Hybrid support
-                    </td>
-
-                    <td className="border-b border-white/10 px-5 py-6 align-top text-slate-300">
-                      Clear handoffs and an escalation route to application
-                      owners
-                    </td>
-                  </tr>
-
-                  <tr>
-                    <td className="border-b border-white/10 px-5 py-6 align-top text-slate-300">
-                      The team needs a specific improvement, such as SLOs or
-                      incident runbooks
-                    </td>
-
-                    <td className="border-b border-white/10 px-5 py-6 align-top font-medium text-blue-300">
-                      Time-limited SRE engagement
-                    </td>
-
-                    <td className="border-b border-white/10 px-5 py-6 align-top text-slate-300">
-                      Documented deliverables and knowledge transfer
-                    </td>
-                  </tr>
-
-                  <tr>
-                    <td className="border-b border-white/10 px-5 py-6 align-top text-slate-300">
-                      Critical services need ongoing monitoring and response
-                      capacity the business cannot staff internally
-                    </td>
-
-                    <td className="border-b border-white/10 px-5 py-6 align-top font-medium text-blue-300">
-                      Managed SRE support
-                    </td>
-
-                    <td className="border-b border-white/10 px-5 py-6 align-top text-slate-300">
-                      Defined service scope, authority, access, and response
-                      expectations
-                    </td>
-                  </tr>
-
-                  <tr>
-                    <td className="px-5 py-6 align-top text-slate-300">
-                      The internal team meets reliability goals with a
-                      sustainable workload
-                    </td>
-
-                    <td className="px-5 py-6 align-top font-medium text-blue-300">
-                      Keep SRE in-house
-                    </td>
-
-                    <td className="px-5 py-6 align-top text-slate-300">
-                      Continue measuring user experience and reviewing
-                      incidents
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-
-          <p className="mt-8">
-            This table is a starting point, not a purchasing rule. A provider
-            cannot set a meaningful reliability target alone. Business and
-            product leaders need to say which customer journeys matter and
-            what level of disruption is acceptable. Engineers and the provider
-            can then agree on how to measure and defend those targets.
-          </p>
-        </section>
-
-        {/* QUESTIONS TO ASK PROVIDER */}
-        <section className="mt-16">
-          <h2 className="mb-7 text-3xl font-bold leading-tight text-white md:text-4xl">
-            What should you ask an SRE outsourcing provider?
-          </h2>
-
-          <p>
-            A list of tools or a promise of “24/7 monitoring” is not enough.
-            Ask the provider to walk through a plausible incident involving
-            your service.
-          </p>
-
-          <ol className="mt-9 space-y-9">
-            <li>
-              <h3 className="text-xl font-semibold text-white">
-                1. What exactly is monitored?
-              </h3>
-
-              <p className="mt-3">
-                Does the scope include customer transactions and application
-                behaviour, or only server and network health?
-              </p>
-            </li>
-
-            <li>
-              <h3 className="text-xl font-semibold text-white">
-                2. Who responds, and when?
-              </h3>
-
-              <p className="mt-3">
-                Identify coverage hours, alert ownership, escalation steps, and
-                how response is measured.
-              </p>
-            </li>
-
-            <li>
-              <h3 className="text-xl font-semibold text-white">
-                3. What can the team do during an incident?
-              </h3>
-
-              <p className="mt-3">
-                Confirm access levels, permitted changes, rollback authority,
-                and the point at which your engineers join.
-              </p>
-            </li>
-
-            <li>
-              <h3 className="text-xl font-semibold text-white">
-                4. What happens after recovery?
-              </h3>
-
-              <p className="mt-3">
-                Ask how incident findings become runbook updates, monitoring
-                changes, or engineering work.
-              </p>
-            </li>
-
-            <li>
-              <h3 className="text-xl font-semibold text-white">
-                5. How will your team retain knowledge?
-              </h3>
-
-              <p className="mt-3">
-                Dashboards, alert rules, runbooks, and incident records should
-                remain available to your business.
-              </p>
-            </li>
-
-            <li>
-              <h3 className="text-xl font-semibold text-white">
-                6. How will you judge value?
-              </h3>
-
-              <p className="mt-3">
-                Agree on measures relevant to your starting problem, such as
-                fewer missed customer-impacting incidents, faster detection,
-                fewer repeat failures, or reduced alert noise.
-              </p>
-            </li>
-          </ol>
-
-          <p className="mt-9">
-            Incident response works best when teams prepare the alerting and
-            on-call process before a failure occurs.
-          </p>
-
-          <p className="mt-7">
-            Price should be evaluated against that agreed scope. A low-cost
-            service that forwards alerts may be sufficient for one business
-            and inadequate for another that needs application investigation
-            and hands-on recovery. Ask for a written description of what is
-            included, excluded, and charged separately.
-          </p>
-        </section>
-
-        {/* HOW TO BEGIN */}
-        <section className="mt-16">
-          <h2 className="mb-7 text-3xl font-bold leading-tight text-white md:text-4xl">
-            How to begin without handing over everything at once
-          </h2>
-
-          <p>
-            Choose one important service or user journey. For a retailer, it
-            might be checkout. For a SaaS business, it might be sign-in or the
-            action customers pay to perform.
-          </p>
-
-          <p className="mt-7">
-            Then work through five steps:
-          </p>
-
-          <ol className="mt-9 space-y-9">
-            <li>
-              <h3 className="text-xl font-semibold text-white">
-                1. Map the journey.
-              </h3>
-
-              <p className="mt-3">
-                Identify its application components, integrations, and the team
-                members who understand them.
-              </p>
-            </li>
-
-            <li>
-              <h3 className="text-xl font-semibold text-white">
-                2. Review recent failures.
-              </h3>
-
-              <p className="mt-3">
-                Include incidents customers reported, even if existing
-                monitors showed the service as healthy.
-              </p>
-            </li>
-
-            <li>
-              <h3 className="text-xl font-semibold text-white">
-                3. Set an initial measure and target.
-              </h3>
-
-              <p className="mt-3">
-                Start with something tied to user success; refine it as your
-                measurement improves.
-              </p>
-            </li>
-
-            <li>
-              <h3 className="text-xl font-semibold text-white">
-                4. Agree on response ownership.
-              </h3>
-
-              <p className="mt-3">
-                Write down coverage hours, severity levels, permissions,
-                communication, and escalation.
-              </p>
-            </li>
-
-            <li>
-              <h3 className="text-xl font-semibold text-white">
-                5. Review the first period of work.
-              </h3>
-
-              <p className="mt-3">
-                Check whether the engagement improved visibility, response, and
-                prevention. Expand its scope only where the evidence supports
-                it.
-              </p>
-            </li>
-          </ol>
-
-          <p className="mt-9">
-            This gives a CTO or engineering manager a concrete way to test an
-            SRE partnership. It also gives founders and operations leaders a
-            clearer view of what they are buying: protection for a customer
-            journey, with responsibilities and results they can examine.
-          </p>
-        </section>
-
-        {/* MAVI SOLUTIONS */}
-        <section className="mt-16">
-          <h2 className="mb-7 text-3xl font-bold leading-tight text-white md:text-4xl">
-            How MaVi Solutions can help
-          </h2>
-
-          <p>
-            MaVi Solutions’ website lists SRE and managed services, application
-            and website monitoring, IT infrastructure monitoring, cloud and
-            DevOps support, and engineering services. Its stated SRE scope
-            includes incident management, observability dashboards, and on-call
-            rotation.
-          </p>
-
-          <p className="mt-7">
-            If you are assessing outside support, MaVi can be part of a
-            discussion about which customer journeys need better monitoring,
-            where your current response process breaks down, and what scope
-            would fit your team. Any proposed coverage hours, access, response
-            commitments, and deliverables should be confirmed in the
-            engagement agreement.
-          </p>
-        </section>
-
-        {/* FAQ */}
-        <section className="mt-16">
-          <h2 className="mb-8 text-3xl font-bold leading-tight text-white md:text-4xl">
-            Frequently asked questions
-          </h2>
-
-          <div className="space-y-10">
-            <div>
-              <h3 className="text-xl font-semibold leading-relaxed text-white">
-                Is SRE outsourcing the same as IT support?
-              </h3>
-
-              <p className="mt-4">
-                They can overlap, but the scope may differ. IT support often
-                handles user requests and technical issues. SRE focuses on the
-                reliability of production services through measures, incident
-                response, and engineering improvements. Ask a provider which of
-                these activities its contract actually covers.
-              </p>
-            </div>
-
-            <div>
-              <h3 className="text-xl font-semibold leading-relaxed text-white">
-                Do we need to outsource SRE to offer 24/7 service?
-              </h3>
-
-              <p className="mt-4">
-                No. An internal team can provide coverage if it has enough
-                people, a sustainable rotation, and the necessary skills.
-                External support is one option when that capacity is missing or
-                when the business needs additional coverage for particular
-                services or hours.
-              </p>
-            </div>
-
-            <div>
-              <h3 className="text-xl font-semibold leading-relaxed text-white">
-                Can an outsourced SRE team guarantee zero downtime?
-              </h3>
-
-              <p className="mt-4">
-                No provider can remove every failure. A useful engagement
-                defines realistic targets, improves detection and recovery,
-                and reduces avoidable repeat incidents.
-              </p>
-            </div>
-
-            <div>
-              <h3 className="text-xl font-semibold leading-relaxed text-white">
-                Should a small business use SRE practices?
-              </h3>
-
-              <p className="mt-4">
-                Yes, when its digital service matters to customers or revenue.
-                It does not need a large SRE department to identify a critical
-                journey, measure whether it works, create a response plan, and
-                learn from failures. The amount of support should match the
-                service’s risk and complexity.
-              </p>
-            </div>
-
-            <div>
-              <h3 className="text-xl font-semibold leading-relaxed text-white">
-                What should remain with our internal team?
-              </h3>
-
-              <p className="mt-4">
-                Keep ownership of product priorities, customer promises,
-                architecture decisions, and the level of reliability the
-                business requires. An external team can operate within that
-                direction and provide evidence for better decisions. Your
-                developers should also stay involved where application
-                knowledge or code changes are needed.
-              </p>
-            </div>
-          </div>
-        </section>
-
-        {/* FINAL CTA */}
-        <section className="mt-16 rounded-3xl border border-blue-400/20 bg-gradient-to-br from-blue-500/10 via-slate-900 to-emerald-400/5 p-8 md:p-10">
-          <h2 className="text-3xl font-bold leading-tight text-white md:text-4xl">
-            Make the decision around the service that matters most
-          </h2>
-
-          <p className="mt-7">
-            SRE outsourcing makes sense when it closes a specific gap in how
-            your business detects, responds to, and prevents customer-impacting
-            failures.
-          </p>
-
-          <p className="mt-7">
-            Begin with the journey customers rely on most, define what good
-            service means, and decide which responsibilities your team can
-            sustainably own.
-          </p>
-
-          <p className="mt-7 font-semibold text-white">
-            Need to assess reliability support for your website or application?
-          </p>
-
-          <button
-            type="button"
-            onClick={goToContact}
-            className="mt-7 inline-flex items-center rounded-xl bg-gradient-to-r from-emerald-400 to-cyan-400 px-7 py-3.5 text-sm font-bold text-slate-950 shadow-lg transition duration-300 hover:-translate-y-0.5 hover:shadow-xl"
-          >
-            Contact MaVi Solutions
-          </button>
-        </section>
-      </div>
-    </article>
+  const selectedBlog = BLOG_POSTS.find(
+    (post) => post.id === selectedPost
   );
 
-  /*
-   * ============================================================
-   * BLOG 2 ARTICLE
-   * ============================================================
-   */
+  // ============================================================
+  // BLOG LISTING
+  // ============================================================
 
-  const renderPosterArticle = () => (
-    <article className="mx-auto max-w-4xl">
-      <div className="mb-6">
-        <span className="inline-flex rounded-full border border-blue-400/20 bg-blue-500/10 px-4 py-2 text-xs font-semibold tracking-[0.16em] text-blue-400">
-          24/7 SRE SUPPORT
-        </span>
-      </div>
-
-      <h1 className="text-4xl font-bold leading-[1.12] text-white md:text-5xl">
-        Extensive Offshore Support for Applications During Non-Business Hours
-      </h1>
-
-      <p className="mt-6 text-sm font-medium text-blue-300">
-        September 2026
-      </p>
-
-      <div className="mt-10 overflow-hidden rounded-2xl border border-white/10 bg-slate-900 shadow-2xl">
-        <img
-          src={BLOG_IMAGES.poster}
-          alt="MaVi Solutions SRE and application support poster"
-          className="block h-auto w-full"
-        />
-      </div>
-
-      <div className="mt-12 text-[17px] leading-[1.9] text-slate-300">
-        <p>
-          Production systems do not stop operating when the business day ends.
-          Customer transactions, integrations, background jobs, and
-          infrastructure continue to run across evenings, weekends, and
-          holidays.
-        </p>
-
-        <p className="mt-7">
-          MaVi Solutions provides dedicated SRE and application support to help
-          teams maintain production visibility and respond to operational
-          issues outside normal business hours.
-        </p>
-
-        <h2 className="mt-16 mb-7 text-3xl font-bold text-white md:text-4xl">
-          How we support your production stack
-        </h2>
-
-        <h3 className="text-2xl font-semibold text-white">
-          Custom Observability Dashboards
-        </h3>
-
-        <p className="mt-4">
-          Real-time visibility across critical golden signals, database query
-          latency, and traffic trends using monitoring and observability
-          platforms.
-        </p>
-
-        <h3 className="mt-10 text-2xl font-semibold text-white">
-          High-Signal Alert Engineering
-        </h3>
-
-        <p className="mt-4">
-          Application and infrastructure logs can be analysed to reduce noisy
-          false alarms and create actionable alerts around meaningful
-          production symptoms.
-        </p>
-
-        <h3 className="mt-10 text-2xl font-semibold text-white">
-          24/7 Production Watch
-        </h3>
-
-        <p className="mt-4">
-          Proactive monitoring, automated triage, and documented runbook
-          execution can help teams respond during late nights, weekends, and
-          holidays.
-        </p>
-
-        <h3 className="mt-10 text-2xl font-semibold text-white">
-          Weekly Performance & Traffic Digests
-        </h3>
-
-        <p className="mt-4">
-          Traffic patterns, latency trends, and recurring error logs can give
-          engineering teams useful information for planning infrastructure
-          improvements.
-        </p>
-
-        <div className="mt-14 rounded-3xl border border-blue-400/20 bg-blue-500/10 p-8">
-          <p className="font-semibold text-white">
-            Keep your developers focused on shipping features while your
-            production reliability receives dedicated operational attention.
-          </p>
-
-          <button
-            type="button"
-            onClick={goToContact}
-            className="mt-7 inline-flex rounded-xl bg-gradient-to-r from-emerald-400 to-cyan-400 px-7 py-3.5 text-sm font-bold text-slate-950"
-          >
-            Contact MaVi Solutions
-          </button>
-        </div>
-      </div>
-    </article>
-  );
-
-  /*
-   * ============================================================
-   * COMING SOON ARTICLE
-   * ============================================================
-   */
-
-  const renderComingSoon = (post: BlogPost) => (
-    <article className="mx-auto max-w-4xl">
-      <div className="mb-6">
-        <span className="inline-flex rounded-full border border-blue-400/20 bg-blue-500/10 px-4 py-2 text-xs font-semibold tracking-[0.16em] text-blue-400">
-          {post.category}
-        </span>
-      </div>
-
-      <h1 className="text-4xl font-bold leading-tight text-white md:text-5xl">
-        {post.title}
-      </h1>
-
-      <p className="mt-6 text-sm font-medium text-blue-300">
-        Coming Soon
-      </p>
-
-      <div className="mt-10 rounded-3xl border border-white/10 bg-gradient-to-br from-slate-900 via-slate-950 to-blue-950/30 p-10 text-center md:p-16">
-        <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-blue-500/10 text-3xl">
-          ✦
-        </div>
-
-        <h2 className="mt-7 text-2xl font-bold text-white md:text-3xl">
-          MaVi Insights
-        </h2>
-
-        <p className="mx-auto mt-5 max-w-2xl text-base leading-8 text-slate-400">
-          This article is currently being prepared. Check back soon for more
-          insights from MaVi Solutions.
-        </p>
-      </div>
-    </article>
-  );
-
-  /*
-   * ============================================================
-   * FULL POST VIEW
-   * ============================================================
-   */
-
-  if (selectedPost) {
-    return (
-      <main className="min-h-screen bg-[#020812] px-5 pb-24 pt-32 md:px-8 lg:px-12">
-        <div className="mx-auto max-w-6xl">
-          {/* Back Button */}
-          <button
-            type="button"
-            onClick={goBack}
-            className="mb-12 inline-flex items-center gap-2 text-sm font-medium text-slate-400 transition hover:text-white"
-          >
-            <span className="text-lg">←</span>
-            Back to Blog
-          </button>
-
-          {selectedPost.id === 1 &&
-            renderSreOutsourcingArticle()}
-
-          {selectedPost.id === 2 &&
-            renderPosterArticle()}
-
-          {(selectedPost.id === 3 || selectedPost.id === 4) &&
-            renderComingSoon(selectedPost)}
-        </div>
-      </main>
+  if (view === "listing") {
+    const featuredPost = BLOG_POSTS.find(
+      (post) => post.featured
     );
-  }
 
-  /*
-   * ============================================================
-   * BLOG LISTING PAGE
-   * ============================================================
-   */
+    const otherPosts = BLOG_POSTS.filter(
+      (post) => !post.featured
+    );
 
-  const featuredPost = blogPosts[0];
-  const remainingPosts = blogPosts.slice(1);
+    return (
+      <main className="min-h-screen bg-slate-50 dark:bg-[#050B14] text-slate-900 dark:text-white">
+        {/* HERO */}
 
-  return (
-    <main className="min-h-screen bg-[#020812] px-5 pb-24 pt-32 md:px-8 lg:px-12">
-      <div className="mx-auto max-w-7xl">
+        <section className="relative overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-br from-[#0066CC]/10 via-transparent to-[#65D249]/10 pointer-events-none" />
 
-        {/* Page Header */}
-        <section className="mx-auto max-w-3xl text-center">
-          <span className="inline-flex rounded-full border border-blue-400/20 bg-blue-500/10 px-4 py-2 text-xs font-semibold tracking-[0.18em] text-blue-400">
-            MAVI INSIGHTS
-          </span>
-
-          <h1 className="mt-6 text-4xl font-bold tracking-tight text-white md:text-5xl lg:text-6xl">
-            Engineering Insights for
-            <span className="block bg-gradient-to-r from-blue-400 to-emerald-400 bg-clip-text text-transparent">
-              Reliable Digital Systems
-            </span>
-          </h1>
-
-          <p className="mt-6 text-base leading-8 text-slate-400 md:text-lg">
-            Practical insights on SRE, application support, observability,
-            cloud, DevOps, and production reliability from MaVi Solutions.
-          </p>
-        </section>
-
-        {/* Featured Article */}
-        <section className="mt-16">
-          <button
-            type="button"
-            onClick={() => openPost(featuredPost)}
-            className="group block w-full overflow-hidden rounded-3xl border border-white/10 bg-slate-950 text-left shadow-2xl transition duration-500 hover:-translate-y-1 hover:border-blue-400/30"
-          >
-            <div className="grid lg:grid-cols-2">
-
-              {/* Featured Image */}
-              <div className="relative min-h-[320px] overflow-hidden bg-slate-900 lg:min-h-[440px]">
-                <img
-                  src={featuredPost.image}
-                  alt="Healthy monitoring dashboard beside a customer checkout showing a payment failure."
-                  className="absolute inset-0 h-full w-full object-cover transition duration-700 group-hover:scale-105"
-                />
-
-                <div className="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-transparent to-transparent" />
-
-                <div className="absolute left-6 top-6">
-                  <span className="rounded-full bg-slate-950/80 px-4 py-2 text-xs font-semibold tracking-wide text-blue-300 backdrop-blur">
-                    FEATURED
-                  </span>
-                </div>
+          <div className="relative max-w-7xl mx-auto px-6 md:px-10 lg:px-12 pt-20 pb-16">
+            <div className="max-w-3xl">
+              <div className="inline-flex items-center rounded-full border border-[#0066CC]/20 bg-[#0066CC]/10 px-4 py-2 text-sm font-semibold text-[#0066CC]">
+                MaVi INSIGHTS
               </div>
 
-              {/* Featured Content */}
-              <div className="flex flex-col justify-center p-8 md:p-10 lg:p-12">
-                <span className="text-xs font-semibold tracking-[0.16em] text-blue-400">
-                  {featuredPost.category}
+              <h1 className="mt-6 text-5xl md:text-6xl font-bold tracking-tight">
+                Engineering insights for{" "}
+                <span className="bg-gradient-to-r from-[#0066CC] to-[#65D249] bg-clip-text text-transparent">
+                  reliable growth.
                 </span>
+              </h1>
 
-                <h2 className="mt-5 text-3xl font-bold leading-tight text-white transition group-hover:text-blue-300 md:text-4xl">
-                  {featuredPost.title}
-                </h2>
-
-                <p className="mt-6 leading-8 text-slate-400">
-                  {featuredPost.excerpt}
-                </p>
-
-                <div className="mt-8 flex items-center justify-between">
-                  <span className="text-sm text-slate-500">
-                    {featuredPost.date}
-                  </span>
-
-                  <span className="font-semibold text-blue-400">
-                    Read Article →
-                  </span>
-                </div>
-              </div>
-            </div>
-          </button>
-        </section>
-
-        {/* Blog Grid */}
-        <section className="mt-16">
-          <div className="mb-8 flex items-end justify-between">
-            <div>
-              <span className="text-xs font-semibold tracking-[0.16em] text-blue-400">
-                LATEST ARTICLES
-              </span>
-
-              <h2 className="mt-3 text-3xl font-bold text-white">
-                More from MaVi
-              </h2>
+              <p className="mt-6 text-lg md:text-xl leading-8 text-slate-600 dark:text-slate-300 max-w-2xl">
+                Practical insights on SRE, observability, cloud,
+                DevOps and application reliability from MaVi
+                Solutions.
+              </p>
             </div>
           </div>
+        </section>
 
-          <div className="grid gap-7 md:grid-cols-2 lg:grid-cols-3">
-            {remainingPosts.map((post) => (
+        {/* FEATURED BLOG */}
+
+        {featuredPost && (
+          <section className="max-w-7xl mx-auto px-6 md:px-10 lg:px-12 pb-20">
+            <button
+              type="button"
+              onClick={() => openArticle(featuredPost.id)}
+              className="group w-full text-left rounded-3xl overflow-hidden border border-slate-200 dark:border-slate-800 bg-white dark:bg-[#0B1422] shadow-sm hover:shadow-xl transition-all duration-300"
+            >
+              <div className="grid lg:grid-cols-2">
+                <div className="aspect-[16/10] lg:aspect-auto overflow-hidden">
+                  <img
+                    src={featuredPost.image}
+                    alt={featuredPost.title}
+                    className="w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-500"
+                  />
+                </div>
+
+                <div className="p-8 md:p-10 lg:p-12 flex flex-col justify-center">
+                  <div className="text-sm font-bold tracking-wider text-[#0066CC]">
+                    FEATURED · {featuredPost.category}
+                  </div>
+
+                  <h2 className="mt-4 text-3xl md:text-4xl font-bold leading-tight">
+                    {featuredPost.title}
+                  </h2>
+
+                  <p className="mt-5 text-lg leading-8 text-slate-600 dark:text-slate-300">
+                    {featuredPost.excerpt}
+                  </p>
+
+                  <div className="mt-8 flex items-center gap-4 text-sm text-slate-500 dark:text-slate-400">
+                    <span>{featuredPost.date}</span>
+                    <span>•</span>
+                    <span>{featuredPost.readTime}</span>
+                  </div>
+
+                  <div className="mt-8 inline-flex items-center gap-2 font-semibold text-[#0066CC]">
+                    Read article
+                    <span className="group-hover:translate-x-1 transition-transform">
+                      →
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </button>
+          </section>
+        )}
+
+        {/* OTHER BLOGS */}
+
+        <section className="max-w-7xl mx-auto px-6 md:px-10 lg:px-12 pb-24">
+          <div className="mb-10">
+            <div className="text-sm font-bold tracking-wider text-[#0066CC]">
+              LATEST INSIGHTS
+            </div>
+
+            <h2 className="mt-2 text-3xl md:text-4xl font-bold">
+              Explore our latest thinking
+            </h2>
+          </div>
+
+          <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-7">
+            {otherPosts.map((post) => (
               <button
                 key={post.id}
                 type="button"
-                onClick={() => openPost(post)}
-                className={`group overflow-hidden rounded-2xl border border-white/10 bg-slate-950 text-left transition duration-500 ${
-                  post.date !== "Coming Soon"
-                    ? "hover:-translate-y-1 hover:border-blue-400/30"
-                    : "cursor-default"
+                onClick={() => {
+                  if (post.date === "Coming Soon") return;
+
+                  openArticle(post.id);
+                }}
+                className={`group text-left rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-800 bg-white dark:bg-[#0B1422] transition-all duration-300 ${
+                  post.date === "Coming Soon"
+                    ? "cursor-default"
+                    : "hover:-translate-y-1 hover:shadow-xl"
                 }`}
               >
-                {/* Card Image */}
-                <div className="relative aspect-[16/10] overflow-hidden bg-gradient-to-br from-slate-900 to-blue-950/30">
-                  {post.image ? (
-                    <img
-                      src={post.image}
-                      alt={post.title}
-                      className="h-full w-full object-cover transition duration-700 group-hover:scale-105"
-                    />
-                  ) : (
-                    <div className="flex h-full items-center justify-center">
-                      <div className="text-4xl text-blue-400/40">
-                        ✦
-                      </div>
-                    </div>
-                  )}
-
-                  {post.date === "Coming Soon" && (
-                    <div className="absolute right-4 top-4 rounded-full bg-slate-950/80 px-3 py-1.5 text-xs font-semibold text-slate-300 backdrop-blur">
-                      Coming Soon
-                    </div>
-                  )}
+                <div className="aspect-[16/10] overflow-hidden">
+                  <img
+                    src={post.image}
+                    alt={post.title}
+                    className="w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-500"
+                  />
                 </div>
 
-                {/* Card Content */}
                 <div className="p-7">
-                  <span className="text-xs font-semibold tracking-[0.14em] text-blue-400">
-                    {post.category}
-                  </span>
-
-                  <h3 className="mt-4 text-xl font-bold leading-snug text-white transition group-hover:text-blue-300">
-                    {post.title}
-                  </h3>
-
-                  <p className="mt-4 line-clamp-3 text-sm leading-7 text-slate-400">
-                    {post.excerpt}
-                  </p>
-
-                  <div className="mt-6 flex items-center justify-between">
-                    <span className="text-xs text-slate-500">
-                      {post.date}
+                  <div className="flex items-center justify-between gap-3">
+                    <span className="text-xs font-bold tracking-wider text-[#0066CC]">
+                      {post.category}
                     </span>
 
-                    {post.date !== "Coming Soon" && (
-                      <span className="text-sm font-semibold text-blue-400">
-                        Read →
+                    {post.date === "Coming Soon" && (
+                      <span className="text-xs font-semibold rounded-full px-3 py-1 bg-slate-100 dark:bg-slate-800 text-slate-500">
+                        Coming Soon
                       </span>
                     )}
                   </div>
+
+                  <h3 className="mt-4 text-2xl font-bold leading-tight">
+                    {post.title}
+                  </h3>
+
+                  <p className="mt-4 text-slate-600 dark:text-slate-300 leading-7">
+                    {post.excerpt}
+                  </p>
+
+                  {post.date !== "Coming Soon" && (
+                    <div className="mt-6 text-sm font-semibold text-[#0066CC]">
+                      Read article →
+                    </div>
+                  )}
                 </div>
               </button>
             ))}
           </div>
         </section>
 
-        {/* Bottom CTA */}
-        <section className="mt-20 overflow-hidden rounded-3xl border border-blue-400/20 bg-gradient-to-br from-blue-500/10 via-slate-950 to-emerald-400/5 p-8 md:p-12">
-          <div className="max-w-3xl">
-            <span className="text-xs font-semibold tracking-[0.16em] text-blue-400">
-              TALK TO MAVI
-            </span>
+        {/* CONTACT CTA */}
 
-            <h2 className="mt-4 text-3xl font-bold leading-tight text-white md:text-4xl">
-              Need help improving your production reliability?
-            </h2>
+        <section className="max-w-7xl mx-auto px-6 md:px-10 lg:px-12 pb-24">
+          <div className="rounded-3xl bg-gradient-to-r from-[#0066CC] to-[#65D249] p-8 md:p-12 lg:p-14 text-white">
+            <div className="max-w-3xl">
+              <div className="text-sm font-bold tracking-wider text-white/80">
+                TALK TO MaVi
+              </div>
 
-            <p className="mt-5 leading-8 text-slate-400">
-              Talk to MaVi Solutions about SRE, application monitoring,
-              observability, cloud, DevOps, and production support.
-            </p>
+              <h2 className="mt-4 text-3xl md:text-4xl font-bold">
+                Need better reliability for your website or
+                application?
+              </h2>
+
+              <p className="mt-5 text-lg leading-8 text-white/90">
+                Let's discuss your current production risks,
+                monitoring requirements and SRE needs.
+              </p>
+
+              <button
+                type="button"
+                onClick={goContact}
+                className="mt-8 px-7 py-3.5 rounded-lg bg-white text-slate-900 font-semibold hover:bg-slate-100 transition"
+              >
+                Contact Us
+              </button>
+            </div>
+          </div>
+        </section>
+      </main>
+    );
+  }
+
+  // ============================================================
+  // ARTICLE VIEW
+  // ============================================================
+
+  if (view === "article" && selectedBlog) {
+    // ==========================================================
+    // BLOG 1
+    // ==========================================================
+
+    if (selectedBlog.id === 1) {
+      return (
+        <main className="min-h-screen bg-slate-50 dark:bg-[#050B14] text-slate-900 dark:text-white">
+          <article className="max-w-5xl mx-auto px-6 md:px-10 py-16 md:py-20">
+            {/* BACK */}
 
             <button
               type="button"
-              onClick={goToContact}
-              className="mt-7 inline-flex rounded-xl bg-gradient-to-r from-emerald-400 to-cyan-400 px-7 py-3.5 text-sm font-bold text-slate-950 shadow-lg transition duration-300 hover:-translate-y-0.5"
+              onClick={goBackToBlog}
+              className="inline-flex items-center gap-2 text-sm font-semibold text-[#0066CC] hover:gap-3 transition-all"
             >
-              Contact Us
+              ← Back to Blog
             </button>
-          </div>
-        </section>
+
+            {/* HEADER */}
+
+            <header className="mt-8">
+              <div className="text-sm font-bold tracking-wider text-[#0066CC] uppercase">
+                {selectedBlog.category}
+              </div>
+
+              <h1 className="mt-4 text-4xl md:text-5xl lg:text-6xl font-bold leading-tight">
+                {selectedBlog.title}
+              </h1>
+
+              <div className="mt-5 flex flex-wrap gap-3 text-sm text-slate-500 dark:text-slate-400">
+                <span>{selectedBlog.date}</span>
+                <span>•</span>
+                <span>{selectedBlog.readTime}</span>
+              </div>
+
+              <div className="mt-10 overflow-hidden rounded-3xl">
+                <img
+                  src={BLOG_IMAGES.sreHero}
+                  alt="Healthy monitoring dashboard beside a customer checkout showing a payment failure."
+                  className="w-full object-cover"
+                />
+              </div>
+            </header>
+
+            {/* BLOG 1 CONTENT */}
+
+            <div className="mt-12">
+              <ArticleParagraph>
+                A dashboard can say an application is healthy
+                while customers are unable to complete a purchase.
+                That gap between infrastructure signals and
+                customer experience can quickly become a revenue,
+                support and engineering problem.
+              </ArticleParagraph>
+
+              <ArticleParagraph>
+                SRE outsourcing makes sense when a customer-facing
+                service needs dependable monitoring and incident
+                response, but the internal team does not have the
+                coverage, capacity or specialist skills to sustain
+                it.
+              </ArticleParagraph>
+
+              <section className="mt-16">
+                <SectionHeading>
+                  What Is SRE Outsourcing?
+                </SectionHeading>
+
+                <ArticleParagraph>
+                  Site Reliability Engineering applies engineering
+                  practices to the reliability of production
+                  services. Instead of treating reliability as an
+                  afterthought, teams define what good service means
+                  and measure whether the customer experience meets
+                  that target.
+                </ArticleParagraph>
+
+                <ArticleParagraph>
+                  Important concepts include service level
+                  indicators (SLIs), service level objectives (SLOs)
+                  and error budgets. Together, they help teams
+                  connect technical performance with customer
+                  expectations.
+                </ArticleParagraph>
+              </section>
+
+              <section className="mt-16">
+                <SectionHeading>
+                  When Does an External SRE Team Make Sense?
+                </SectionHeading>
+
+                <ArticleParagraph>
+                  There is no single company size or technology
+                  stack that automatically requires outsourced SRE.
+                  The better question is whether there is a
+                  reliability gap that the current team cannot
+                  sustainably close.
+                </ArticleParagraph>
+
+                <ImageBlock
+                  src={BLOG_IMAGES.sreDecisionGuide}
+                  alt="Flowchart showing when to keep SRE in-house, add hybrid support, or assess managed SRE based on customer impact and team capacity."
+                />
+
+                <div className="mt-10 space-y-8">
+                  <InfoCard title="1. Customers report problems before alerts do">
+                    <p>
+                      If customers discover failures before your
+                      team receives a useful alert, the monitoring
+                      and response process needs attention.
+                    </p>
+                  </InfoCard>
+
+                  <InfoCard title="2. The same engineers build the product and handle every incident">
+                    <p>
+                      When product engineers repeatedly leave
+                      roadmap work to investigate production
+                      problems, reliability work can become a major
+                      source of disruption.
+                    </p>
+                  </InfoCard>
+
+                  <InfoCard title="3. Incidents are restored but keep returning">
+                    <p>
+                      Restoring service is important, but recurring
+                      incidents indicate that the underlying
+                      problem may not have been addressed.
+                    </p>
+                  </InfoCard>
+
+                  <InfoCard title="4. A launch or migration created a temporary skills gap">
+                    <p>
+                      An external SRE team can provide additional
+                      experience and capacity during a period of
+                      change.
+                    </p>
+                  </InfoCard>
+
+                  <InfoCard title="5. You need support across multiple operating hours">
+                    <p>
+                      External support can supplement internal
+                      coverage when the business needs monitoring
+                      or incident response beyond the team's
+                      sustainable working hours.
+                    </p>
+                  </InfoCard>
+                </div>
+              </section>
+
+              <section className="mt-16">
+                <SectionHeading>
+                  Outsourced, In-House, or Hybrid: Which Model Fits?
+                </SectionHeading>
+
+                <ArticleParagraph>
+                  The right model depends on the reliability risk,
+                  internal skills, coverage requirements and level
+                  of operational ownership your business wants to
+                  retain.
+                </ArticleParagraph>
+
+                <ImageBlock
+                  src={BLOG_IMAGES.sreOperatingModels}
+                  alt="Comparison of in-house, hybrid, and managed SRE by best fit, team ownership, support scope, and risks to watch."
+                />
+
+                <div className="mt-10 overflow-x-auto rounded-2xl border border-slate-200 dark:border-slate-700">
+                  <table className="w-full text-left border-collapse">
+                    <thead>
+                      <tr className="bg-slate-100 dark:bg-slate-800">
+                        <th className="p-5 font-bold">Model</th>
+                        <th className="p-5 font-bold">
+                          Best Fit
+                        </th>
+                        <th className="p-5 font-bold">
+                          Watch For
+                        </th>
+                      </tr>
+                    </thead>
+
+                    <tbody>
+                      <tr className="border-t border-slate-200 dark:border-slate-700">
+                        <td className="p-5 font-semibold">
+                          In-house
+                        </td>
+
+                        <td className="p-5">
+                          Teams with strong internal reliability
+                          capabilities and sustainable coverage.
+                        </td>
+
+                        <td className="p-5">
+                          On-call load and specialist capacity.
+                        </td>
+                      </tr>
+
+                      <tr className="border-t border-slate-200 dark:border-slate-700">
+                        <td className="p-5 font-semibold">
+                          Hybrid
+                        </td>
+
+                        <td className="p-5">
+                          Teams that want internal ownership with
+                          additional expertise or coverage.
+                        </td>
+
+                        <td className="p-5">
+                          Clear responsibility and escalation rules.
+                        </td>
+                      </tr>
+
+                      <tr className="border-t border-slate-200 dark:border-slate-700">
+                        <td className="p-5 font-semibold">
+                          Managed
+                        </td>
+
+                        <td className="p-5">
+                          Businesses needing broader external
+                          monitoring and incident support.
+                        </td>
+
+                        <td className="p-5">
+                          Knowledge transfer, access and ownership.
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </section>
+
+              <section className="mt-16">
+                <SectionHeading>
+                  What Should You Ask an SRE Outsourcing Provider?
+                </SectionHeading>
+
+                <div className="mt-10 space-y-8">
+                  <NumberStep
+                    number={1}
+                    title="What exactly is monitored?"
+                  >
+                    Ask whether the service covers customer
+                    journeys, application behaviour,
+                    infrastructure and dependencies.
+                  </NumberStep>
+
+                  <NumberStep
+                    number={2}
+                    title="Who responds, and when?"
+                  >
+                    Confirm coverage hours, escalation paths and
+                    alert ownership.
+                  </NumberStep>
+
+                  <NumberStep
+                    number={3}
+                    title="What can the team do during an incident?"
+                  >
+                    Understand the permissions and actions
+                    available to the external team.
+                  </NumberStep>
+
+                  <NumberStep
+                    number={4}
+                    title="What happens after recovery?"
+                  >
+                    Ask how incidents are reviewed and how
+                    recurring problems are addressed.
+                  </NumberStep>
+
+                  <NumberStep
+                    number={5}
+                    title="How will the team retain knowledge?"
+                  >
+                    Make sure dashboards, runbooks and operational
+                    knowledge remain accessible to your business.
+                  </NumberStep>
+
+                  <NumberStep
+                    number={6}
+                    title="How will you judge value?"
+                  >
+                    Agree on useful measures such as detection,
+                    diagnosis, recovery and repeat incidents.
+                  </NumberStep>
+                </div>
+              </section>
+
+              <section className="mt-16">
+                <SectionHeading>
+                  How to Begin Without Handing Over Everything at
+                  Once
+                </SectionHeading>
+
+                <ArticleParagraph>
+                  You do not need to outsource your entire
+                  production environment on day one. Start with the
+                  customer journey that matters most.
+                </ArticleParagraph>
+
+                <div className="mt-10 space-y-8">
+                  <NumberStep
+                    number={1}
+                    title="Map the journey"
+                  >
+                    Identify the services, integrations and people
+                    involved in the customer experience.
+                  </NumberStep>
+
+                  <NumberStep
+                    number={2}
+                    title="Review recent failures"
+                  >
+                    Look at recent incidents and identify where
+                    detection, response or diagnosis broke down.
+                  </NumberStep>
+
+                  <NumberStep
+                    number={3}
+                    title="Set an initial measure and target"
+                  >
+                    Define what good service means and how you
+                    will measure improvement.
+                  </NumberStep>
+
+                  <NumberStep
+                    number={4}
+                    title="Agree on response ownership"
+                  >
+                    Document coverage hours, severity levels,
+                    permissions, communication and escalation.
+                  </NumberStep>
+
+                  <NumberStep
+                    number={5}
+                    title="Review the first period"
+                  >
+                    Check whether visibility, response and
+                    prevention improved before expanding the
+                    scope.
+                  </NumberStep>
+                </div>
+              </section>
+
+              <section className="mt-16">
+                <SectionHeading>
+                  How MaVi Solutions Can Help
+                </SectionHeading>
+
+                <ArticleParagraph>
+                  MaVi Solutions provides SRE and managed services,
+                  application and website monitoring, IT
+                  infrastructure monitoring, cloud and DevOps
+                  support and engineering services.
+                </ArticleParagraph>
+
+                <ArticleParagraph>
+                  Its stated SRE scope includes incident management,
+                  observability dashboards and on-call rotation.
+                </ArticleParagraph>
+
+                <ArticleParagraph>
+                  If you are assessing outside support, MaVi can
+                  help discuss which customer journeys need better
+                  monitoring, where the current response process
+                  breaks down and what scope would fit your team.
+                </ArticleParagraph>
+              </section>
+
+              <section className="mt-16">
+                <SectionHeading>
+                  Frequently Asked Questions
+                </SectionHeading>
+
+                <div className="mt-10 space-y-10">
+                  <InfoCard title="Is SRE outsourcing the same as IT support?">
+                    <p>
+                      They can overlap, but the scope may differ.
+                      IT support often handles user requests and
+                      technical issues. SRE focuses on production
+                      reliability, incident response and engineering
+                      improvements.
+                    </p>
+                  </InfoCard>
+
+                  <InfoCard title="Do we need to outsource SRE to offer 24/7 service?">
+                    <p>
+                      No. An internal team can provide coverage if
+                      it has enough people, a sustainable rotation
+                      and the necessary skills. External support is
+                      one option when that capacity is missing.
+                    </p>
+                  </InfoCard>
+
+                  <InfoCard title="Can an outsourced SRE team guarantee zero downtime?">
+                    <p>
+                      No provider can remove every failure. A useful
+                      engagement defines realistic targets,
+                      improves detection and recovery, and reduces
+                      avoidable repeat incidents.
+                    </p>
+                  </InfoCard>
+
+                  <InfoCard title="Should a small business use SRE practices?">
+                    <p>
+                      Yes, when its digital service matters to
+                      customers or revenue. A small team can start
+                      with one critical journey, clear measures and
+                      a response plan.
+                    </p>
+                  </InfoCard>
+
+                  <InfoCard title="What should remain with our internal team?">
+                    <p>
+                      Keep ownership of product priorities,
+                      customer promises, architecture decisions and
+                      the level of reliability the business
+                      requires.
+                    </p>
+                  </InfoCard>
+                </div>
+              </section>
+
+              <section className="mt-16">
+                <SectionHeading>
+                  Make the Decision Around the Service That Matters
+                  Most
+                </SectionHeading>
+
+                <ArticleParagraph>
+                  SRE outsourcing makes sense when it closes a
+                  specific gap in how your business detects,
+                  responds to and prevents customer-impacting
+                  failures.
+                </ArticleParagraph>
+
+                <ArticleParagraph>
+                  Begin with the journey customers rely on most,
+                  define what good service means and decide which
+                  responsibilities your team can sustainably own.
+                </ArticleParagraph>
+              </section>
+            </div>
+
+            {/* CTA */}
+
+            <div className="mt-16 rounded-3xl bg-gradient-to-r from-[#0066CC] to-[#65D249] p-8 md:p-12 text-white">
+              <h2 className="text-3xl font-bold">
+                Need to assess reliability support for your
+                website or application?
+              </h2>
+
+              <p className="mt-5 text-lg leading-8 text-white/90">
+                Contact MaVi Solutions to discuss your service,
+                current risks and the support scope you need.
+              </p>
+
+              <button
+                type="button"
+                onClick={goContact}
+                className="mt-8 px-7 py-3.5 rounded-lg bg-white text-slate-900 font-semibold hover:bg-slate-100 transition"
+              >
+                Contact Us
+              </button>
+            </div>
+          </article>
+        </main>
+      );
+    }
+
+    // ==========================================================
+    // BLOG 2
+    // MONITORING VS OBSERVABILITY
+    // ==========================================================
+
+    if (selectedBlog.id === 2) {
+      return (
+        <main className="min-h-screen bg-slate-50 dark:bg-[#050B14] text-slate-900 dark:text-white">
+          <article className="max-w-5xl mx-auto px-6 md:px-10 py-16 md:py-20">
+            {/* BACK */}
+
+            <button
+              type="button"
+              onClick={goBackToBlog}
+              className="inline-flex items-center gap-2 text-sm font-semibold text-[#0066CC] hover:gap-3 transition-all"
+            >
+              ← Back to Blog
+            </button>
+
+            {/* BLOG 2 HEADER */}
+
+            <header className="mt-8">
+              <div className="text-sm font-bold tracking-wider text-[#0066CC] uppercase">
+                OBSERVABILITY
+              </div>
+
+              <h1 className="mt-4 text-4xl md:text-5xl lg:text-6xl font-bold leading-tight">
+                Monitoring vs Observability in 2026: What Does
+                Your Business Actually Need?
+              </h1>
+
+              <p className="mt-5 text-xl leading-8 text-slate-600 dark:text-slate-300">
+                Monitoring tells you when a known risk becomes a
+                problem. Observability helps you understand why
+                unexpected problems happen.
+              </p>
+
+              <div className="mt-5 flex flex-wrap gap-3 text-sm text-slate-500 dark:text-slate-400">
+                <span>October 2026</span>
+                <span>•</span>
+                <span>9 min read</span>
+              </div>
+
+              {/* YOUR EXISTING IMAGE */}
+
+              <div className="mt-10 overflow-hidden rounded-3xl border border-slate-200 dark:border-slate-800">
+                <img
+                  src={BLOG_IMAGES.monitoringObservabilityHero}
+                  alt="Monitoring vs Observability"
+                  className="w-full object-cover"
+                />
+              </div>
+            </header>
+
+            {/* BLOG 2 CONTENT */}
+
+            <div className="mt-12">
+              {/* INTRO */}
+
+              <ArticleParagraph>
+                An alert says database CPU is at 85%. Customers say
+                payments are timing out. Nobody in the incident
+                channel can yet say whether the two are connected.
+              </ArticleParagraph>
+
+              <ArticleParagraph>
+                That moment shows the difference between knowing
+                something is wrong and understanding why. For a
+                growing business, the gap affects how long
+                customers wait, how many support requests arrive,
+                and how much release time engineers lose to
+                investigation.
+              </ArticleParagraph>
+
+              <ArticleParagraph>
+                Monitoring and observability are often presented as
+                rivals. They are better treated as two layers of
+                one reliability practice. The useful question is
+                which layer your business is missing today.
+              </ArticleParagraph>
+
+              {/* QUICK ANSWER */}
+
+              <section className="mt-16">
+                <SectionHeading>
+                  The Quick Answer
+                </SectionHeading>
+
+                <ArticleParagraph>
+                  Monitoring tells you when a known risk has become
+                  a problem. Observability helps you investigate
+                  problems you did not predict.
+                </ArticleParagraph>
+
+                <ArticleParagraph>
+                  Start by monitoring your most important customer
+                  journeys, then add observability when finding the
+                  cause takes too long or your systems have too many
+                  moving parts for predefined checks.
+                </ArticleParagraph>
+
+                <ArticleParagraph>
+                  Most growing businesses need some of both, but few
+                  need to buy everything at once. If your application
+                  is simple, your team resolves incidents quickly,
+                  and your alerts reflect real customer impact, a
+                  larger platform may add cost without much benefit.
+                </ArticleParagraph>
+              </section>
+
+              {/* DIFFERENCE */}
+
+              <section className="mt-16">
+                <SectionHeading>
+                  What Is the Difference Between Monitoring and
+                  Observability?
+                </SectionHeading>
+
+                <ArticleParagraph>
+                  Monitoring tracks measures you have chosen in
+                  advance, such as response time, error rate or
+                  server load, and alerts people when a measure
+                  crosses an agreed limit.
+                </ArticleParagraph>
+
+                <ArticleParagraph>
+                  Monitoring is useful for known failure conditions.
+                  It helps teams detect that something needs
+                  attention.
+                </ArticleParagraph>
+
+                <ArticleParagraph>
+                  Observability is the ability to understand what is
+                  happening inside a system from the data it
+                  produces, including questions nobody thought to
+                  ask beforehand.
+                </ArticleParagraph>
+
+                <ArticleParagraph>
+                  Teams usually rely on three kinds of telemetry:
+                  <strong> metrics, logs and traces.</strong> The
+                  value comes from connecting them.
+                </ArticleParagraph>
+
+                {/* USE SAME IMAGE AGAIN IN ARTICLE */}
+
+                <ImageBlock
+                  src={BLOG_IMAGES.monitoringObservabilityHero}
+                  alt="Monitoring vs Observability showing how monitoring detects known failure conditions while observability helps investigate complex failures."
+                  caption="Monitoring and observability are two layers of one reliability practice."
+                />
+
+                {/* COMPARISON TABLE */}
+
+                <div className="mt-12 overflow-x-auto rounded-2xl border border-slate-200 dark:border-slate-700">
+                  <table className="w-full text-left border-collapse">
+                    <thead>
+                      <tr className="bg-slate-100 dark:bg-slate-800">
+                        <th className="p-5 font-bold">
+                          Area
+                        </th>
+
+                        <th className="p-5 font-bold">
+                          Monitoring
+                        </th>
+
+                        <th className="p-5 font-bold">
+                          Observability
+                        </th>
+                      </tr>
+                    </thead>
+
+                    <tbody>
+                      <tr className="border-t border-slate-200 dark:border-slate-700">
+                        <td className="p-5 font-semibold">
+                          Purpose
+                        </td>
+
+                        <td className="p-5">
+                          Detect known failure conditions
+                        </td>
+
+                        <td className="p-5">
+                          Investigate unfamiliar or complex failures
+                        </td>
+                      </tr>
+
+                      <tr className="border-t border-slate-200 dark:border-slate-700">
+                        <td className="p-5 font-semibold">
+                          Typical question
+                        </td>
+
+                        <td className="p-5">
+                          Have checkout errors crossed our limit?
+                        </td>
+
+                        <td className="p-5">
+                          Why do payments fail only after this
+                          morning's release?
+                        </td>
+                      </tr>
+
+                      <tr className="border-t border-slate-200 dark:border-slate-700">
+                        <td className="p-5 font-semibold">
+                          Data used
+                        </td>
+
+                        <td className="p-5">
+                          Predefined metrics, checks and alerts
+                        </td>
+
+                        <td className="p-5">
+                          Metrics, logs and traces linked together
+                        </td>
+                      </tr>
+
+                      <tr className="border-t border-slate-200 dark:border-slate-700">
+                        <td className="p-5 font-semibold">
+                          Best suited to
+                        </td>
+
+                        <td className="p-5">
+                          Stable, well-understood services
+                        </td>
+
+                        <td className="p-5">
+                          Distributed applications, many
+                          integrations and frequent releases
+                        </td>
+                      </tr>
+
+                      <tr className="border-t border-slate-200 dark:border-slate-700">
+                        <td className="p-5 font-semibold">
+                          Risk if used alone
+                        </td>
+
+                        <td className="p-5">
+                          You see the symptom but spend hours
+                          finding the cause
+                        </td>
+
+                        <td className="p-5">
+                          Data and cost grow without clear business
+                          questions
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+
+                <ArticleParagraph>
+                  Observability does not replace monitoring. Alerts
+                  are still how a person learns that something needs
+                  attention.
+                </ArticleParagraph>
+              </section>
+
+              {/* CHECKOUT EXAMPLE */}
+
+              <section className="mt-16">
+                <SectionHeading>
+                  Following One Checkout Request
+                </SectionHeading>
+
+                <ArticleParagraph>
+                  Consider a customer trying to complete a
+                  purchase.
+                </ArticleParagraph>
+
+                <div className="mt-10 grid md:grid-cols-2 gap-6">
+                  <InfoCard title="Monitoring raises the alert">
+                    <p>
+                      Payment errors rise above the agreed limit,
+                      and the team receives an alert.
+                    </p>
+                  </InfoCard>
+
+                  <InfoCard title="Observability shows where and why">
+                    <p>
+                      Traces can show that the slowdown starts at
+                      the payment-provider call. Logs can show
+                      timeouts on the version released that
+                      morning, while metrics show the error rate
+                      increased after the release.
+                    </p>
+                  </InfoCard>
+                </div>
+
+                <ArticleParagraph>
+                  This is where metrics, logs and traces become more
+                  valuable when they are connected together.
+                </ArticleParagraph>
+
+                <ArticleParagraph>
+                  Without monitoring, the team may not know that
+                  something needs attention. Without observability,
+                  the team may know something is wrong but spend
+                  much longer finding the cause.
+                </ArticleParagraph>
+              </section>
+
+              {/* GOLDEN SIGNALS */}
+
+              <section className="mt-16">
+                <SectionHeading>
+                  Start With Signals That Reflect the Customer
+                </SectionHeading>
+
+                <ArticleParagraph>
+                  For user-facing services, four important signals
+                  are latency, traffic, errors and saturation.
+                </ArticleParagraph>
+
+                <div className="mt-10 grid sm:grid-cols-2 gap-6">
+                  <InfoCard title="Latency">
+                    <p>
+                      How long customer actions or requests take.
+                    </p>
+                  </InfoCard>
+
+                  <InfoCard title="Traffic">
+                    <p>
+                      How many requests or customer transactions
+                      arrive.
+                    </p>
+                  </InfoCard>
+
+                  <InfoCard title="Errors">
+                    <p>
+                      How many requests or customer actions fail.
+                    </p>
+                  </InfoCard>
+
+                  <InfoCard title="Saturation">
+                    <p>
+                      How close supporting resources are to their
+                      limits.
+                    </p>
+                  </InfoCard>
+                </div>
+
+                <ArticleParagraph>
+                  For checkout, that means how long payments take,
+                  how many attempts arrive, how many fail, and how
+                  close supporting resources are to their limits.
+                </ArticleParagraph>
+
+                <ArticleParagraph>
+                  Pair these signals with a service level objective
+                  (SLO), an agreed target for something customers
+                  care about, such as the share of successful
+                  checkouts.
+                </ArticleParagraph>
+
+                <ArticleParagraph>
+                  Alerts tied to that target point people to
+                  customer impact rather than every infrastructure
+                  fluctuation.
+                </ArticleParagraph>
+              </section>
+
+              {/* OUTGROWN MONITORING */}
+
+              <section className="mt-16">
+                <SectionHeading>
+                  Signs You Have Outgrown Basic Monitoring
+                </SectionHeading>
+
+                <div className="mt-10 space-y-8">
+                  <InfoCard title="1. You know something is wrong, but not why">
+                    <p>
+                      If incidents regularly start with an alert and
+                      end with hours of manual searching through
+                      servers and log files, your detection may be
+                      fine while your diagnosis is the bottleneck.
+                    </p>
+                  </InfoCard>
+
+                  <InfoCard title="2. Your architecture has many moving parts">
+                    <p>
+                      Microservices, cloud services, APIs and
+                      third-party integrations make one customer
+                      action touch many components. A dashboard for
+                      each component cannot always show where a
+                      single request slowed down.
+                    </p>
+                  </InfoCard>
+
+                  <InfoCard title="3. Alerts are noisy or ignored">
+                    <p>
+                      If engineers mute channels because most alerts
+                      need no action, a real incident can be missed.
+                    </p>
+                  </InfoCard>
+
+                  <InfoCard title="4. The same incidents keep returning">
+                    <p>
+                      Restoring service is not the same as removing
+                      the cause. Without enough data to find the
+                      underlying cause, a team can only repeat the
+                      workaround.
+                    </p>
+                  </InfoCard>
+
+                  <InfoCard title="5. Releases carry risk you cannot see quickly">
+                    <p>
+                      If nobody can tell within minutes whether a
+                      deployment changed performance or errors,
+                      releases become slower and more cautious than
+                      they need to be.
+                    </p>
+                  </InfoCard>
+                </div>
+              </section>
+
+              {/* MAY NOT NEED FULL PLATFORM */}
+
+              <section className="mt-16">
+                <SectionHeading>
+                  Signs You May Not Need a Full Observability
+                  Platform Yet
+                </SectionHeading>
+
+                <ArticleParagraph>
+                  More data is not automatically more insight. A
+                  complex observability platform can add cost
+                  without solving the actual reliability problem.
+                </ArticleParagraph>
+
+                <ArticleParagraph>
+                  You may be able to wait if you run one application
+                  with a few dependencies, your team diagnoses
+                  incidents quickly, and your alerts already follow
+                  real customer journeys.
+                </ArticleParagraph>
+
+                <ArticleParagraph>
+                  In that case, tighten monitoring, keep runbooks
+                  current, and revisit the question when your
+                  architecture or traffic changes.
+                </ArticleParagraph>
+              </section>
+
+              {/* COMMERCIAL IMPACT */}
+
+              <section className="mt-16">
+                <SectionHeading>
+                  What This Means Commercially
+                </SectionHeading>
+
+                <ArticleParagraph>
+                  For founders and operations leaders, the case
+                  rests on outcomes, not tools.
+                </ArticleParagraph>
+
+                <ArticleList
+                  items={[
+                    <>
+                      <strong>Faster detection:</strong> problems
+                      are identified before customers have to report
+                      them.
+                    </>,
+
+                    <>
+                      <strong>Shorter diagnosis:</strong> engineers
+                      spend less time searching and more time fixing.
+                    </>,
+
+                    <>
+                      <strong>Fewer repeat incidents:</strong>{" "}
+                      better evidence can reduce avoidable support
+                      load and disruption.
+                    </>,
+
+                    <>
+                      <strong>Protected engineering time:</strong>{" "}
+                      teams spend less time firefighting and more
+                      time shipping releases.
+                    </>,
+                  ]}
+                />
+
+                <ArticleParagraph>
+                  Treat these as results to measure against your own
+                  baseline, not as promises from any tool or
+                  provider.
+                </ArticleParagraph>
+              </section>
+
+              {/* REGIONAL CONSIDERATIONS */}
+
+              <section className="mt-16">
+                <SectionHeading>
+                  Considerations for India, the UAE, Singapore and
+                  Malaysia
+                </SectionHeading>
+
+                <ArticleParagraph>
+                  Businesses serving several markets should review
+                  three things.
+                </ArticleParagraph>
+
+                <div className="mt-10 space-y-7">
+                  <NumberStep
+                    number={1}
+                    title="Peak hours by market"
+                  >
+                    An incident late in one team's day may land in
+                    another market's busiest period.
+                  </NumberStep>
+
+                  <NumberStep
+                    number={2}
+                    title="Local customer journeys"
+                  >
+                    Regional payment methods may fail differently
+                    from global ones.
+                  </NumberStep>
+
+                  <NumberStep
+                    number={3}
+                    title="Data handling"
+                  >
+                    Logs and traces can contain personal or
+                    payment-related information. Decide what is
+                    collected, masked, retained and stored, and
+                    confirm it against each country's
+                    data-protection requirements with your legal
+                    adviser.
+                  </NumberStep>
+                </div>
+              </section>
+
+              {/* HOW TO START */}
+
+              <section className="mt-16">
+                <SectionHeading>
+                  How to Start Without Buying a Platform
+                </SectionHeading>
+
+                <ArticleParagraph>
+                  Choose one customer journey, such as checkout or
+                  sign-in, and work through five steps.
+                </ArticleParagraph>
+
+                <div className="mt-10 space-y-9">
+                  <NumberStep
+                    number={1}
+                    title="Map the journey"
+                  >
+                    List its services, integrations and the people
+                    who understand them.
+                  </NumberStep>
+
+                  <NumberStep
+                    number={2}
+                    title="Measure the golden signals"
+                  >
+                    Add latency, traffic, errors and saturation for
+                    that journey.
+                  </NumberStep>
+
+                  <NumberStep
+                    number={3}
+                    title="Instrument consistently"
+                  >
+                    Consider OpenTelemetry, a vendor-neutral
+                    standard for collecting metrics, logs and
+                    traces, so you are not tied to one tool.
+                  </NumberStep>
+
+                  <NumberStep
+                    number={4}
+                    title="Alert on customer impact"
+                  >
+                    Define who is paged, for what, and how they
+                    escalate.
+                  </NumberStep>
+
+                  <NumberStep
+                    number={5}
+                    title="Learn from each incident"
+                  >
+                    Where the team lacked data to find the cause,
+                    add that telemetry. Expand to other journeys
+                    only when the evidence supports it.
+                  </NumberStep>
+                </div>
+              </section>
+
+              {/* PROVIDER QUESTIONS */}
+
+              <section className="mt-16">
+                <SectionHeading>
+                  What Should You Ask a Monitoring or Observability
+                  Provider?
+                </SectionHeading>
+
+                <div className="mt-10 space-y-6">
+                  <InfoCard title="What is covered?">
+                    <p>
+                      Ask whether the service covers customer
+                      transactions and application behaviour, or
+                      only server and network health.
+                    </p>
+                  </InfoCard>
+
+                  <InfoCard title="Who responds, and when?">
+                    <p>
+                      Confirm coverage hours, alert ownership and
+                      escalation.
+                    </p>
+                  </InfoCard>
+
+                  <InfoCard title="Who owns the data and dashboards?">
+                    <p>
+                      Your business should keep access to alert
+                      rules, dashboards and records.
+                    </p>
+                  </InfoCard>
+
+                  <InfoCard title="How is sensitive data handled?">
+                    <p>
+                      Ask about masking, retention and storage
+                      location.
+                    </p>
+                  </InfoCard>
+
+                  <InfoCard title="How will value be judged?">
+                    <p>
+                      Agree measures such as detection time,
+                      diagnosis time and repeat incidents.
+                    </p>
+                  </InfoCard>
+                </div>
+              </section>
+
+              {/* MAVI */}
+
+              <section className="mt-16">
+                <SectionHeading>
+                  How MaVi Solutions Can Help
+                </SectionHeading>
+
+                <ArticleParagraph>
+                  MaVi Solutions' website lists application and
+                  website monitoring, IT infrastructure monitoring,
+                  SRE and managed services, cloud and DevOps
+                  support, and engineering services.
+                </ArticleParagraph>
+
+                <ArticleParagraph>
+                  Its stated SRE scope includes incident management,
+                  observability dashboards and on-call rotation.
+                </ArticleParagraph>
+
+                <ArticleParagraph>
+                  If you are deciding how far to go, MaVi can help
+                  you discuss which customer journeys need better
+                  visibility, where diagnosis slows down, and what
+                  scope suits your team.
+                </ArticleParagraph>
+
+                <ArticleParagraph>
+                  Any coverage hours, access, response commitments
+                  and deliverables should be confirmed in the
+                  engagement agreement.
+                </ArticleParagraph>
+              </section>
+
+              {/* FAQ */}
+
+              <section className="mt-16">
+                <SectionHeading>
+                  Frequently Asked Questions
+                </SectionHeading>
+
+                <div className="mt-10 space-y-8">
+                  <InfoCard title="Is observability just a new name for monitoring?">
+                    <p>
+                      No. Monitoring checks known conditions and
+                      alerts you. Observability gives you connected
+                      data to investigate unexpected problems. They
+                      work together.
+                    </p>
+                  </InfoCard>
+
+                  <InfoCard title="Do we need both?">
+                    <p>
+                      Usually, yes, in proportion to your system's
+                      complexity. Monitoring comes first for most
+                      businesses. Observability adds value as
+                      diagnosis becomes slower or architecture
+                      becomes more distributed.
+                    </p>
+                  </InfoCard>
+
+                  <InfoCard title="Do we have to use OpenTelemetry?">
+                    <p>
+                      No. It is a widely used open standard for
+                      generating and exporting telemetry and can
+                      reduce lock-in if you later change tools.
+                    </p>
+                  </InfoCard>
+
+                  <InfoCard title="Will observability replace SLOs and incident reviews?">
+                    <p>
+                      No. SLOs define what good service means, and
+                      incident reviews turn failures into
+                      improvements. Observability supplies the
+                      evidence for both.
+                    </p>
+                  </InfoCard>
+
+                  <InfoCard title="Can a small business benefit?">
+                    <p>
+                      Yes, if its digital service matters to
+                      customers or revenue. A small team can start
+                      with one journey, a handful of signals and
+                      clear alerts, then grow from there.
+                    </p>
+                  </InfoCard>
+                </div>
+              </section>
+
+              {/* FINAL */}
+
+              <section className="mt-16">
+                <SectionHeading>
+                  Match the Tooling to the Problem
+                </SectionHeading>
+
+                <ArticleParagraph>
+                  Choose monitoring when you need to know quickly
+                  that a customer-facing service is failing. Add
+                  observability when you need to understand why,
+                  across many services, faster than your team can
+                  today.
+                </ArticleParagraph>
+
+                <ArticleParagraph>
+                  Begin with the journey customers rely on most,
+                  and let evidence decide how much further to go.
+                </ArticleParagraph>
+              </section>
+            </div>
+
+            {/* BLOG 2 CTA */}
+
+            <div className="mt-16 rounded-3xl bg-gradient-to-r from-[#0066CC] to-[#65D249] p-8 md:p-12 text-white">
+              <div className="max-w-3xl">
+                <h2 className="text-3xl md:text-4xl font-bold">
+                  Need Better Visibility Into Your Website or
+                  Application?
+                </h2>
+
+                <p className="mt-5 text-lg leading-8 text-white/90">
+                  Contact MaVi Solutions to discuss your current
+                  risks and the monitoring or observability scope
+                  that fits your business.
+                </p>
+
+                <button
+                  type="button"
+                  onClick={goContact}
+                  className="mt-8 px-7 py-3.5 rounded-lg bg-white text-slate-900 font-semibold hover:bg-slate-100 transition"
+                >
+                  Contact Us
+                </button>
+              </div>
+            </div>
+
+            {/* RELATED BLOG */}
+
+            <div className="mt-16 pt-10 border-t border-slate-200 dark:border-slate-800">
+              <div className="text-sm font-bold tracking-wider text-[#0066CC]">
+                RELATED INSIGHT
+              </div>
+
+              <button
+                type="button"
+                onClick={() => openArticle(1)}
+                className="mt-4 text-left group"
+              >
+                <h3 className="text-2xl md:text-3xl font-bold group-hover:text-[#0066CC] transition">
+                  SRE Outsourcing in 2026: When Does Your Business
+                  Actually Need It?
+                </h3>
+
+                <p className="mt-3 text-slate-600 dark:text-slate-400">
+                  Explore when an external SRE team can help a
+                  growing business improve reliability, monitoring
+                  and incident response.
+                </p>
+
+                <span className="inline-block mt-4 font-semibold text-[#0066CC]">
+                  Read Blog 1 →
+                </span>
+              </button>
+            </div>
+          </article>
+        </main>
+      );
+    }
+  }
+
+  // ============================================================
+  // FALLBACK
+  // ============================================================
+
+  return (
+    <main className="min-h-screen bg-slate-50 dark:bg-[#050B14] flex items-center justify-center">
+      <div className="text-center px-6">
+        <h1 className="text-3xl font-bold text-slate-900 dark:text-white">
+          Blog not found
+        </h1>
+
+        <button
+          type="button"
+          onClick={goBackToBlog}
+          className="mt-6 px-6 py-3 rounded-lg bg-[#0066CC] text-white font-semibold"
+        >
+          Back to Blog
+        </button>
       </div>
     </main>
   );

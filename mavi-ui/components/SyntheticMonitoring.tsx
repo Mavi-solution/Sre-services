@@ -553,7 +553,7 @@ const boardComponents: Record<string, React.FC> = {
   kibana: KibanaBoard,
 };
  
-const ROTATE_MS = 1500;
+const ROTATE_MS = 2500;
  
 export const SyntheticMonitoring: React.FC = () => {
   const [active, setActive] = useState(0);
@@ -561,6 +561,7 @@ export const SyntheticMonitoring: React.FC = () => {
  
   useEffect(() => {
     if (paused) return;
+    
     const id = setInterval(() => {
       setActive((i) => (i + 1) % dashboards.length);
     }, ROTATE_MS);
