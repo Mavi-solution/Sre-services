@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Header } from './components/Header';
 import { Hero } from './components/Hero';
@@ -17,21 +18,23 @@ import { Chatbot } from './components/Chatbot';
 import { ThemeToggle } from './components/ThemeToggle';
 import Blog from './components/Blog';
 
-const App: React.FC = () => {
-  const [view, setView] = useState<
-    'home' | 'contact' | 'privacy' | 'terms' | 'blog'
-  >('home');
+type View = 'home' | 'contact' | 'privacy' | 'terms' | 'blog';
 
-  // Handle back button / hash changes for a better SPA feel
+const App: React.FC = () => {
+  const [view, setView] = useState<View>('home');
+
   useEffect(() => {
     const handleHashChange = () => {
-      if (window.location.hash === '#contact-page') {
+      const hash = window.location.hash;
+
+      if (hash === '#contact-page') {
         setView('contact');
-      } else if (window.location.hash === '#privacy') {
+      } else if (hash === '#privacy') {
         setView('privacy');
-      } else if (window.location.hash === '#terms') {
+      } else if (hash === '#terms') {
         setView('terms');
-      } else if (window.location.hash === '#blog') {
+      } else if (hash === '#blog' || hash.startsWith('#blog/')) {
+        // Keep Blog mounted for #blog, #blog/1, and #blog/2.
         setView('blog');
       } else {
         setView('home');
@@ -41,48 +44,41 @@ const App: React.FC = () => {
     window.addEventListener('hashchange', handleHashChange);
     handleHashChange();
 
-    return () => window.removeEventListener('hashchange', handleHashChange);
+    return () => {
+      window.removeEventListener('hashchange', handleHashChange);
+    };
   }, []);
 
-  const navigateTo = (
-    newView: 'home' | 'contact' | 'privacy' | 'terms' | 'blog'
-  ) => {
+  const navigateTo = (newView: View) => {
     setView(newView);
 
-    if (newView === 'contact') {
-      window.location.hash = 'contact-page';
-    } else if (newView === 'privacy') {
-      window.location.hash = 'privacy';
-    } else if (newView === 'terms') {
-      window.location.hash = 'terms';
-    } else if (newView === 'blog') {
-      window.location.hash = 'blog';
-    } else {
-      window.location.hash = '';
+    const hashes: Record<View, string> = {
+      home: '',
+      contact: '#contact-page',
+      privacy: '#privacy',
+      terms: '#terms',
+      blog: '#blog',
+    };
+
+    if (window.location.hash !== hashes[newView]) {
+      window.location.hash = hashes[newView];
     }
 
     window.scrollTo({
       top: 0,
-      behavior: 'smooth'
+      behavior: 'smooth',
     });
   };
 
   return (
     <div className="flex flex-col min-h-screen bg-slate-50 dark:bg-[#050B14] text-slate-900 dark:text-slate-100 transition-colors duration-300">
-
-      <Header
-        currentView={view}
-        onNavigate={navigateTo}
-      />
+      <Header currentView={view} onNavigate={navigateTo} />
 
       <main className="flex-grow">
-
         {view === 'home' ? (
           <>
             <Hero onContactClick={() => navigateTo('contact')} />
-
             <About />
-
             <SREPhilosophy />
 
             <section id="what-we-do">
@@ -93,9 +89,7 @@ const App: React.FC = () => {
             </section>
 
             <CaseStudy />
-
             <TechStack />
-
             <ContactSection
               onContactClick={() => navigateTo('contact')}
             />
@@ -110,15 +104,11 @@ const App: React.FC = () => {
             onBack={() => navigateTo('home')}
           />
         )}
-
       </main>
 
       <ThemeToggle />
-
       <Chatbot />
-
       <Footer onNavigate={navigateTo} />
-
     </div>
   );
 };

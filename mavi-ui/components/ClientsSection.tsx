@@ -4,15 +4,18 @@ import React from 'react';
 const clients = [
   {
     id: 1,
-    name: 'Placibo technologies Pvt Ltd',
-    //url: 'https://www.placibo.in/',
-    logoUrl: 'https://i.postimg.cc/nLnXXpBD/Logo_(1).png',
+    name: 'Placibo Technologies Pvt Ltd',
+    logoUrl: 'https://i.postimg.cc/nLnXXpBD/Logo-(1).png',
   },
   {
     id: 2,
     name: 'Rainbow Gate Marketing',
-    // url: 'https://www.rainbowgate.online/',
     logoUrl: 'https://i.postimg.cc/mrcysmXc/Picsart_26_02_20_12_45_52_806.png',
+  },
+  {
+    id: 3,
+    name: 'Vivasvana',
+    logoUrl: '/images/vivasvana-logo.png',
   },
 ];
 
@@ -30,7 +33,7 @@ export const ClientsSection: React.FC = () => {
           </h3>
         </div>
 
-        <div className="flex justify-start items-center gap-12 md:gap-24 flex-wrap">
+        <div className="flex justify-start items-center gap-8 md:gap-12 flex-wrap">
           {clients.map((client) => (
             <a
               key={client.id}
@@ -39,11 +42,17 @@ export const ClientsSection: React.FC = () => {
               rel="noopener noreferrer"
               className="transition-all duration-300 ease-in-out transform hover:scale-105"
             >
-              <img
-                src={client.logoUrl}
-                alt={`${client.name} logo`}
-                className="max-h-[60px]  hover:grayscale-0 opacity-60 hover:opacity-100 transition-all duration-300 ease-in-out"
-              />
+            <img
+              src={client.logoUrl}
+              alt={`${client.name} logo`}
+              className={`w-[220px] h-[75px] object-contain opacity-80 hover:opacity-100 transition-all duration-300 ease-in-out ${
+                client.id === 2
+                  ? 'scale-150'
+                  : client.id === 3
+                  ? 'scale-150'
+                  : ''
+              }`}
+            />
             </a>
           ))}
         </div>
