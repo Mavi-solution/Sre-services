@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { Header } from './components/Header';
 import { Hero } from './components/Hero';
+import { NewYear2027 } from './components/NewYear2027';
 import { About } from './components/About';
 import { SREPhilosophy } from './components/SREPhilosophy';
 import { ServicesTable } from './components/ServicesTable';
@@ -78,6 +79,7 @@ const App: React.FC = () => {
         {view === 'home' ? (
           <>
             <Hero onContactClick={() => navigateTo('contact')} />
+            <NewYear2027 onContactClick={() => navigateTo('contact')} />
             <About />
             <SREPhilosophy />
 
