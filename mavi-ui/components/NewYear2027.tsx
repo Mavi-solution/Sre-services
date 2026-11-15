@@ -102,8 +102,18 @@ export const NewYear2027: React.FC<NewYear2027Props> = ({ onContactClick }) => {
           mask-image: linear-gradient(to bottom, transparent 0%, #000 10%, #000 82%, transparent 100%), linear-gradient(to right, transparent 0%, #000 22%, #000 78%, transparent 100%);
           mask-composite: intersect;
         }
+        @keyframes ny-border {
+          0%   { background-position: 0% 50%; }
+          100% { background-position: 300% 50%; }
+        }
+        .ny-thanks {
+          background: linear-gradient(90deg, #42E695, #3BB2B8, #2E7CF6, #FACC15, #42E695);
+          background-size: 300% 100%;
+          animation: ny-border 6s linear infinite;
+          box-shadow: 0 0 35px rgba(66,230,149,0.25), 0 0 70px rgba(46,124,246,0.15);
+        }
         @media (prefers-reduced-motion: reduce) {
-          .ny-burst .ny-p, .ny-burst .ny-flash, .ny-year, .ny-robot { animation: none; }
+          .ny-burst .ny-p, .ny-burst .ny-flash, .ny-year, .ny-robot, .ny-thanks { animation: none; }
           .ny-burst { display: none; }
         }
       `}</style>
@@ -159,9 +169,26 @@ export const NewYear2027: React.FC<NewYear2027Props> = ({ onContactClick }) => {
             <span className="ny-year block text-[5.5rem] md:text-[9rem] lg:text-[10rem]">2027</span>
           </h2>
 
+          {/* Highlighted thank-you to clients */}
+          <div className="ny-thanks relative max-w-2xl mb-6 rounded-2xl p-[2px]">
+            <div className="relative rounded-2xl bg-[#07111F]/95 px-6 py-6 md:px-8 md:py-7">
+              <div className="flex items-center gap-3 mb-3">
+                <span className="w-10 h-10 shrink-0 rounded-full bg-gradient-to-br from-[#42E695] to-[#2E7CF6] flex items-center justify-center shadow-lg shadow-green-500/30">
+                  <i className="fa-solid fa-heart text-[15px] text-slate-950"></i>
+                </span>
+                <span className="text-[11px] font-black uppercase tracking-[0.2em] text-[#42E695]">
+                  A Big Thank You to Our Clients
+                </span>
+              </div>
+              <p className="text-xl md:text-2xl font-semibold text-white leading-snug">
+                Thank you to every client and partner who trusted MaVi this year. Your systems, your
+                customers and your goals are what drive our team every day.
+              </p>
+            </div>
+          </div>
+
           <p className="text-lg md:text-xl text-slate-300 leading-relaxed max-w-2xl mb-10">
-            Thank you to every client and partner who trusted us this year. We wish you a reliable,
-            scalable and outage-free 2027, and our{' '}
+            We wish you a reliable, scalable and outage-free 2027, and our{' '}
             <span className="text-white font-bold">offshore SRE team</span> is ready to take on any
             project to help make it happen.
           </p>
