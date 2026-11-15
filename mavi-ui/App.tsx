@@ -78,8 +78,8 @@ const App: React.FC = () => {
       <main className="flex-grow">
         {view === 'home' ? (
           <>
-            <Hero onContactClick={() => navigateTo('contact')} />
             <NewYear2027 onContactClick={() => navigateTo('contact')} />
+            <Hero onContactClick={() => navigateTo('contact')} />
             <About />
             <SREPhilosophy />
 
