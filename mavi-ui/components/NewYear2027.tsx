@@ -97,9 +97,9 @@ export const NewYear2027: React.FC<NewYear2027Props> = ({ onContactClick }) => {
         }
         .ny-robot {
           animation: ny-float 5s ease-in-out infinite;
-          -webkit-mask-image: linear-gradient(to bottom, #000 80%, transparent 100%), linear-gradient(to right, transparent 0%, #000 12%, #000 88%, transparent 100%);
+          -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 10%, #000 82%, transparent 100%), linear-gradient(to right, transparent 0%, #000 22%, #000 78%, transparent 100%);
           -webkit-mask-composite: source-in;
-          mask-image: linear-gradient(to bottom, #000 80%, transparent 100%), linear-gradient(to right, transparent 0%, #000 12%, #000 88%, transparent 100%);
+          mask-image: linear-gradient(to bottom, transparent 0%, #000 10%, #000 82%, transparent 100%), linear-gradient(to right, transparent 0%, #000 22%, #000 78%, transparent 100%);
           mask-composite: intersect;
         }
         @media (prefers-reduced-motion: reduce) {
@@ -220,14 +220,14 @@ export const NewYear2027: React.FC<NewYear2027Props> = ({ onContactClick }) => {
         </div>
 
         {/* RIGHT: MaVi SRE specialist, full height */}
-        <div className="relative flex items-end justify-center h-[70vh] lg:h-auto">
+        <div className="relative flex items-end justify-center h-[75vh] max-h-[720px] lg:max-h-none lg:h-[calc(100vh-80px)] lg:sticky lg:top-20 self-start">
           <div className="absolute bottom-6 left-1/2 -translate-x-1/2 w-3/4 h-10 bg-[#42E695]/30 blur-2xl rounded-full"></div>
           <img
             src="/images/mavi-sre-specialist.webp"
             alt="MaVi SRE specialist robot"
-            className="ny-robot relative h-full max-h-[calc(100vh-80px)] w-auto object-contain object-bottom"
+            className="ny-robot relative h-full w-auto max-w-full lg:max-w-none object-contain object-bottom"
           />
-          <div className="absolute top-10 right-0 lg:-right-4 px-4 py-2 rounded-xl bg-[#050B14]/80 border border-[#42E695]/40 backdrop-blur-md shadow-lg shadow-green-500/10">
+          <div className="absolute top-8 right-0 lg:-right-4 px-4 py-2 rounded-xl bg-[#050B14]/80 border border-[#42E695]/40 backdrop-blur-md shadow-lg shadow-green-500/10">
             <div className="flex items-center gap-2">
               <span className="w-2 h-2 rounded-full bg-[#42E695] animate-pulse"></span>
               <span className="text-[10px] font-black uppercase tracking-[0.2em] text-[#42E695]">
