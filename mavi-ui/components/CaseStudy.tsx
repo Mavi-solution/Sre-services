@@ -1,6 +1,52 @@
 
 import React from 'react';
 
+// DRAFT case studies: confirm industries, figures and timelines before publishing.
+const moreCases = [
+  {
+    industry: 'E-commerce Platform',
+    icon: 'fa-cart-shopping',
+    title: 'Peak-season traffic without the outages',
+    challenge:
+      'Checkout slowed down and failed during sale events, and the in-house team was firefighting through every launch.',
+    solution:
+      'Load-tested the platform, added Kubernetes autoscaling, set SLOs for checkout and put our offshore SRE team on 24/7 watch during sale windows.',
+    results: [
+      { value: '99.95%', label: 'Checkout uptime' },
+      { value: '3x', label: 'Peak traffic handled' },
+      { value: '0', label: 'Sale-day outages' },
+    ],
+  },
+  {
+    industry: 'SaaS / Startup',
+    icon: 'fa-cloud',
+    title: 'Cloud bill cut while releases got faster',
+    challenge:
+      'Over-provisioned cloud resources and manual deployments meant high monthly costs and slow, risky releases.',
+    solution:
+      'Right-sized compute, moved workloads to autoscaling and spot capacity, and built CI/CD pipelines with automated rollbacks.',
+    results: [
+      { value: '35%', label: 'Lower cloud cost' },
+      { value: '5x', label: 'More frequent deploys' },
+      { value: '<10m', label: 'Rollback time' },
+    ],
+  },
+  {
+    industry: 'Business Services',
+    icon: 'fa-headset',
+    title: 'An offshore SRE team running 24/7 in weeks',
+    challenge:
+      'The client had no out-of-hours cover, so issues found overnight waited until morning and customers noticed first.',
+    solution:
+      'Set up a dedicated offshore SRE team with runbooks, follow-the-sun on-call and synthetic monitoring of key customer journeys.',
+    results: [
+      { value: '24/7', label: 'Coverage' },
+      { value: '70%', label: 'Faster detection' },
+      { value: '4 wks', label: 'To go live' },
+    ],
+  },
+];
+
 export const CaseStudy: React.FC = () => {
   const metrics = [
     { label: 'MTTR REDUCTION', value: '85%', trend: 'down', icon: 'fa-stopwatch' },
@@ -112,6 +158,44 @@ export const CaseStudy: React.FC = () => {
                  ))}
               </div>
             </div>
+          </div>
+        </div>
+
+        {/* More case studies.
+            DRAFT: industries, numbers and timelines are placeholders to be confirmed by MaVi before merge. */}
+        <div className="mt-16">
+          <h4 className="text-[11px] font-black text-[#2E7CF6] uppercase tracking-[0.4em] mb-8">More Success Stories</h4>
+          <div className="grid md:grid-cols-3 gap-6">
+            {moreCases.map((c) => (
+              <div
+                key={c.title}
+                className="flex flex-col rounded-3xl bg-white dark:bg-white/[0.03] border border-slate-200 dark:border-white/10 p-8 hover:-translate-y-1 hover:shadow-2xl transition-all duration-300"
+              >
+                <div className="flex items-center gap-3 mb-5">
+                  <span className="w-11 h-11 rounded-xl bg-gradient-to-br from-[#42E695]/20 to-[#2E7CF6]/20 flex items-center justify-center">
+                    <i className={`fa-solid ${c.icon} text-[#2E7CF6]`}></i>
+                  </span>
+                  <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 dark:text-slate-400">{c.industry}</span>
+                </div>
+                <h5 className="text-xl font-black text-slate-900 dark:text-white mb-4 leading-snug">{c.title}</h5>
+                <div className="mb-3">
+                  <span className="text-[10px] font-black text-red-500 uppercase tracking-[0.2em]">Challenge</span>
+                  <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed mt-1">{c.challenge}</p>
+                </div>
+                <div className="mb-6">
+                  <span className="text-[10px] font-black text-green-600 dark:text-[#42E695] uppercase tracking-[0.2em]">What We Did</span>
+                  <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed mt-1">{c.solution}</p>
+                </div>
+                <div className="mt-auto grid grid-cols-3 gap-2 pt-5 border-t border-slate-200 dark:border-white/10">
+                  {c.results.map((r) => (
+                    <div key={r.label}>
+                      <div className="text-lg font-black text-green-600 dark:text-green-400 font-mono-tech">{r.value}</div>
+                      <div className="text-[9px] font-black uppercase tracking-tight text-slate-500 leading-tight">{r.label}</div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       </div>
