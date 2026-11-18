@@ -14,6 +14,7 @@ export const Header: React.FC<HeaderProps> = ({ currentView, onNavigate }) => {
     { name: 'HOME', id: 'home', href: '#home' },
     { name: 'ABOUT', id: 'about-us', href: '#about-us' },
     { name: 'SERVICES', id: 'what-we-do', href: '#what-we-do' },
+    { name: 'PRODUCTS', id: 'products', href: '#products' },
     { name: 'CASE STUDIES', id: 'work', href: '#work' },
   ];
 
