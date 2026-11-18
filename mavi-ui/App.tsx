@@ -12,6 +12,7 @@ import { ClientsSection } from './components/ClientsSection';
 import { CaseStudy } from './components/CaseStudy';
 import { TechStack } from './components/TechStack';
 import { ContactSection } from './components/ContactSection';
+import { ProductsSection } from './components/ProductsSection';
 import { ContactPage } from './components/ContactPage';
 import { LegalPage } from './components/LegalPage';
 import { Footer } from './components/Footer';
@@ -80,16 +81,17 @@ const App: React.FC = () => {
           <>
             <NewYear2027 onContactClick={() => navigateTo('contact')} />
             <Hero onContactClick={() => navigateTo('contact')} />
+            <ClientsSection />
             <About />
             <SREPhilosophy />
 
             <section id="what-we-do">
               <ServicePortfolio />
-              <ClientsSection />
               <ServicesTable />
               <AIAdvantage />
             </section>
 
+            <ProductsSection onContactClick={() => navigateTo('contact')} />
             <CaseStudy />
             <TechStack />
             <ContactSection
